@@ -35,7 +35,7 @@ class BlogScraper(BaseDriver):
         return "\n".join(clean_texts)
     
     def _optimize_for_chatgpt(self, text: str) -> str:
-        text = re.sub(r"[~!@$%^&*()_+={}\[\]:;\"'<>,.?/\\|`✓■▶♡♥☆★ㅜㅠㅎㅎㅋㄱ🅿☎⏱‼️⏰]+", "", text)  # 특수기호 제거
+        text = re.sub(r"[~!@$%^&*()_+={}\[\]:;\"'<>,.?/\\|`✓■▶♡♥☆★ㅜㅠㅎㅎㅋㄱ🅿☎⏱‼️⏰⭕𐭩•ᡣ]+", "", text)  # 특수기호 제거
         text = re.sub(r"\s+", " ", text)  # 공백 정리
         text = re.sub(r"[ㄱ-ㅎㅏ-ㅣ]+", "", text)  # 초성, 감탄사 제거
         text = self._remove_emojis(text)

@@ -14,11 +14,6 @@ class CommentWriter(BaseDriver):
         post_1 = self.driver.find_element(By.ID, "post_1")
         area_sympathy = post_1.find_element(By.CSS_SELECTOR, ".area_sympathy")
         u_likeit_list_module = area_sympathy.find_element(By.CSS_SELECTOR, ":scope > .u_likeit_list_module")
-        style = u_likeit_list_module.get_attribute("style")
-        if "visibility: visible" not in style: 
-            logger.info(f"공감 버튼 안보임")
-            return
-
         u_likeit_list_btn = u_likeit_list_module.find_element(By.CSS_SELECTOR, "a.u_likeit_list_btn")
         if "on" in u_likeit_list_btn.get_attribute("class").split():
             logger.info(f"공감 버튼 눌러져 있음")
