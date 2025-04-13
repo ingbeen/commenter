@@ -21,7 +21,7 @@ def run():
         blog_scraper = BlogScraper(driver)
         for blog_id in recent_commenter_ids: 
             try: 
-                count += 0
+                repeat_count += 1
                 url = blog_scraper.go_to_blog(blog_id)
 
                 header = blog_scraper.get_post_header()
