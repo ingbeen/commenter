@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# VSCode
+# .vscode/
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+*.log
+logs/
+error_log.txt
+api_log.txt
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# mypy / pyright / pylint
+.mypy_cache/
+.pyright/
+.pytest_cache/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Other
+*.sqlite3
+*.db

@@ -1,0 +1,17 @@
+{
+    // (1) 현재 프로젝트 가상환경 경로 (필요시 수정)
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    // (2) 저장 시 import 자동 정리
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    // (3) 자동 import 추천 기능
+    "python.analysis.autoImportCompletions": true,
+    // (4) 기본 타입 체크 (선택 사항)
+    "python.analysis.typeCheckingMode": "basic",
+    // (5) 저장 시 전체 포맷도 함께
+    "editor.formatOnSave": true,
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportOptionalMemberAccess": "none"
+    }
+}
