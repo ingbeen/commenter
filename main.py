@@ -1,4 +1,4 @@
-from api.generate_comment import generate_comment, is_token_length_valid
+from api.generate_comment import generate_comment, truncate_text_to_token_limit
 from naver.comment_writer import CommentWriter
 from naver.driver_factory import create_chrome_driver
 from naver.comment_scraper import CommentScraper
@@ -26,9 +26,7 @@ def run():
 
                 header = blog_scraper.get_post_header()
                 content = blog_scraper.get_post_content()
-                if not is_token_length_valid(content):
-                    logger.info(f"pass / is_token_length_valid = False")
-                    continue
+                content = truncate_text_to_token_limit(content)
 
                 comment_writer = CommentWriter(driver)
                 comment_writer.press_like_if_needed()
@@ -57,7 +55,6 @@ def run():
     except Exception as e:
         error_log(e)
     finally:
-        input("엔터를 누르면 종료합니다...")
         if driver:
             driver.quit()
 

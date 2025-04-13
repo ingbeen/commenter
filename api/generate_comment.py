@@ -33,7 +33,7 @@ def generate_comment(header: str, content: str) -> str:
                 "내가 애완동물을 키우는 것처럼 말하지 마.\n"
                 "‘저희 강아지에게도 먹여보고 싶어요’, ‘우리 고양이랑 같이 가보고 싶네요’ 같은 표현은 절대 금지.\n"
                 "정보에 고마워하는 자연스러운 표현은 괜찮지만, 개인적인 체험이나 계획처럼 보이는 표현은 모두 제외.\n"
-                "댓글이 '감사합니다'로 끝나는 패턴이 반복되지 않도록 주의하고, 필요할 때만 자연스럽게 포함해줘.\n"
+                "댓글이 '감사합니다'로 끝나지 않고 자연스럽게 마무리 지어줘.\n"
                 "마침표를 과도하게 사용하지 말고, 문장은 연결어를 활용해 자연스럽게 이어줘.\n"
                 "문법과 띄어쓰기는 자연스럽게 지켜줘.\n"
                 "내용은 딱딱하거나 어색하지 않게, 부드럽고 공감 가는 말투로 작성해줘.\n"
@@ -56,9 +56,12 @@ def generate_comment(header: str, content: str) -> str:
 
     return comment
 
-def is_token_length_valid(text: str, min_tokens=500, max_tokens=2000) -> bool:
+def truncate_text_to_token_limit(text: str, max_tokens: int = 2000) -> str:
     enc = tiktoken.encoding_for_model("gpt-4")
-    num_tokens = len(enc.encode(text))
-    logger.info(f"num_tokens = {num_tokens}")
-
-    return min_tokens <= num_tokens <= max_tokens
+    tokens = enc.encode(text)
+    logger.info(f"토큰 수 = {len(tokens)}")
+    if len(tokens) > max_tokens:
+        tokens = tokens[:max_tokens]
+        text = enc.decode(tokens)
+    
+    return text
