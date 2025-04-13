@@ -1,4 +1,4 @@
-from api.generate_comment import generate_comment, truncate_text_to_token_limit
+from api.generate_comment import generate_comment, truncate_text_to_token_limit, is_token_length_valid
 from naver.comment_writer import CommentWriter
 from naver.driver_factory import create_chrome_driver
 from naver.comment_scraper import CommentScraper
@@ -21,12 +21,17 @@ def run():
         blog_scraper = BlogScraper(driver)
         for blog_id in recent_commenter_ids: 
             try: 
+                logger.info(f"repeat_count = {repeat_count} / success_count = {success_count}")
+
                 repeat_count += 1
                 url = blog_scraper.go_to_blog(blog_id)
 
                 header = blog_scraper.get_post_header()
                 content = blog_scraper.get_post_content()
                 content = truncate_text_to_token_limit(content)
+                if not is_token_length_valid(content):
+                    logger.info(f"pass / is_token_length_valid = False")
+                    continue
 
                 comment_writer = CommentWriter(driver)
                 comment_writer.press_like_if_needed()
@@ -38,7 +43,6 @@ def run():
                 comment_writer.add_comment_if_needed(comment)
 
                 success_count += 1
-                logger.info(f"repeat_count = {repeat_count} / success_count = {success_count}")
             except NoSuchElementException as e:
                 if '[id="post_1"]' in str(e) or 'id="post_1"' in str(e):
                     logger.info(f"pass / post_1 없음")

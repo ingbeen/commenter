@@ -66,3 +66,9 @@ def truncate_text_to_token_limit(text: str, max_tokens: int = 2000) -> str:
         logger.info(f"변경된 토큰 수 = {len(tokens)}")
     
     return text
+
+def is_token_length_valid(text: str, min_tokens=300) -> bool:
+    enc = tiktoken.encoding_for_model("gpt-4")
+    num_tokens = len(enc.encode(text))
+
+    return min_tokens <= num_tokens
