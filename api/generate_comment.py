@@ -63,5 +63,6 @@ def truncate_text_to_token_limit(text: str, max_tokens: int = 2000) -> str:
     if len(tokens) > max_tokens:
         tokens = tokens[:max_tokens]
         text = enc.decode(tokens)
+        logger.info(f"변경된 토큰 수 = {len(tokens)}")
     
     return text

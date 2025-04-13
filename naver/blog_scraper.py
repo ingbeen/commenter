@@ -35,7 +35,7 @@ class BlogScraper(BaseDriver):
         return "\n".join(clean_texts)
     
     def _optimize_for_chatgpt(self, text: str) -> str:
-        text = re.sub(r"[~!@$%^&*()_+={}\[\]:;\"'<>,.?/\\|`✓■▶♡♥☆★ㅜㅠㅎㅎㅋㄱ🅿☎⏱‼️⏰⭕𐭩•ᡣ↓▼”ദ്ദി｡̀‧₊◡´ゝ☺‘’※●]+", "", text)  # 특수기호 제거
+        text = re.sub(r"[~!@$%^&*()_+={}\[\]:;\"'<>,.?/\\|`✓■▶♡♥☆★ㅜㅠㅎㅎㅋㄱ🅿☎⏱‼️⏰⭕𐭩•ᡣ↓▼”ദ്ദി｡̀‧₊◡´ゝ☺‘’※●₍ᐢᐢ₎ෆ]+", "", text)  # 특수기호 제거
         text = re.sub(r"\s+", " ", text)  # 공백 정리
         text = re.sub(r"[ㄱ-ㅎㅏ-ㅣ]+", "", text)  # 초성, 감탄사 제거
         text = self._remove_emojis(text)
@@ -60,38 +60,3 @@ class BlogScraper(BaseDriver):
             flags=re.UNICODE
         )
         return emoji_pattern.sub(r'', text)
-    
-
-
-
-    #     def get_post_content(self) -> str:
-    #     post_1 = self.driver.find_element(By.ID, "post_1")
-    #     se_text_paragraphs = post_1.find_elements(By.CSS_SELECTOR, ".se-main-container .se-text .se-text-paragraph")
-
-    #     clean_texts = []
-    #     for p in se_text_paragraphs:
-    #         html = p.get_attribute("outerHTML")
-    #         soup = BeautifulSoup(html, "html.parser")
-    #         text = soup.get_text(separator=" ", strip=True)
-    #         if text:
-    #             clean_texts.append(text)
-        
-    #     raw_text = "\n".join(contents)
-        
-    #     return self._optimize_for_chatgpt(raw_text)
-    
-    # def _optimize_for_chatgpt(self, text: str) -> str:
-    #     lines = text.splitlines()
-    #     clean_lines = []
-
-    #     for line in lines:
-    #         line = line.strip()
-
-    #         line = re.sub(r"[~!@#$%^&*()_+={}\[\]:;\"'<>,.?/\\|`✓■▶♡♥☆★ㅜㅠㅎㅎㅋㄱ]+", "", line)  # 특수기호 제거
-    #         line = re.sub(r"\s+", " ", line)  # 공백 정리
-    #         line = re.sub(r"[ㄱ-ㅎㅏ-ㅣ]+", "", line)  # 초성, 감탄사 제거
-    #         line = self._remove_emojis(line)
-
-    #         clean_lines.append(line)
-
-    #     return "\n".join(clean_lines)
