@@ -9,6 +9,7 @@ class CommentWriter(BaseDriver):
     def __init__(self, driver):
         super().__init__(driver)
         self.can_add_comment = False
+        self.btn_comment = None
 
     def press_like_if_needed(self):
         post_1 = self.driver.find_element(By.ID, "post_1")
@@ -21,16 +22,15 @@ class CommentWriter(BaseDriver):
         
         u_likeit_list_btn.click()
         logger.info(f"공감 버튼 클릭")
-        self.can_add_comment = True
         wait_random()
 
-    def add_comment_if_needed(self, text: str):
-        if not self.can_add_comment:
-            return
-
+    def init_comment_button (self):
         post_1 = self.driver.find_element(By.ID, "post_1")
-        btn_comment = post_1.find_element(By.CSS_SELECTOR, ".area_comment .btn_comment")
-        btn_comment.click()
+        self.btn_comment = post_1.find_element(By.CSS_SELECTOR, ".area_comment .btn_comment")
+        self.can_add_comment = True
+
+    def add_comment(self, text: str):
+        self.btn_comment.click()
         wait_random()
 
         u_cbox_write_box = WebDriverWait(self.driver, 10).until(

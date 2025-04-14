@@ -35,12 +35,13 @@ def run():
 
                 comment_writer = CommentWriter(driver)
                 comment_writer.press_like_if_needed()
+                comment_writer.init_comment_button()
                 if not comment_writer.can_add_comment:
                     logger.info(f"pass / can_add_comment = False")
                     continue
 
                 comment = generate_comment(header, content)
-                comment_writer.add_comment_if_needed(comment)
+                comment_writer.add_comment(comment)
 
                 success_count += 1
             except NoSuchElementException as e:
@@ -48,6 +49,8 @@ def run():
                     logger.info(f"pass / post_1 없음")
                 elif '.area_sympathy' in str(e) or 'class="area_sympathy"' in str(e):
                     logger.info("pass / area_sympathy 없음")
+                elif '.area_comment .btn_comment' in str(e) or 'class="btn_comment"' in str(e):
+                    logger.info("pass / btn_comment 없음")
                 else:
                     error_log(e, url)
 
