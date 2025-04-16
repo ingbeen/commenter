@@ -7,13 +7,14 @@ class CommentScraper(BaseDriver):
     def __init__(self, driver):
         super().__init__(driver)
     
+
     def get_recent_commenter_ids(self) -> list[str]:
         page = 1
         limit = 100
         collected_ids = set()
 
         while len(collected_ids) < limit:
-            self._go_to_admin_blog(page)
+            self._go_to_comment_manage(page)
 
             table = self.driver.find_element(By.ID, "tableListById")
             blog_id_elements = table.find_elements(By.CSS_SELECTOR, "span.blogid")
@@ -28,7 +29,7 @@ class CommentScraper(BaseDriver):
         
         return list(collected_ids)
 
-    def _go_to_admin_blog(self, page):
+    def _go_to_comment_manage(self, page):
         url = (f"https://admin.blog.naver.com/AdminNaverCommentManageView.naver?paging.commentSearchType=0&paging.economyTotalCount=8220&paging.commentSearchValue=&blogId=smy375&paging.currentPage={page}"
         )
         self.get(url)

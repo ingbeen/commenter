@@ -7,17 +7,20 @@ class BlogScraper(BaseDriver):
     def __init__(self, driver):
         super().__init__(driver)
 
+
     def go_to_blog(self, blog_id: str):
         url = f"https://blog.naver.com/PostList.naver?blogId={blog_id}"
         self.get(url)
 
         return url
 
+
     def get_post_header(self) -> str:
         post_1 = self.driver.find_element(By.ID, "post_1")
         span = post_1.find_element(By.CSS_SELECTOR, ".se-documentTitle .pcol1 span")
 
         return self._optimize_for_chatgpt(span.text)
+
 
     def get_post_content(self) -> str:
         post_1 = self.driver.find_element(By.ID, "post_1")
@@ -33,7 +36,8 @@ class BlogScraper(BaseDriver):
                 clean_texts.append(text)
         
         return "\n".join(clean_texts)
-    
+
+
     def _optimize_for_chatgpt(self, text: str) -> str:
         text = re.sub(r"[~!@$%^&*()_+={}\[\]:;\"'<>,.?/\\|`✓■▶♡♥☆★ㅜㅠㅎㅎㅋㄱ🅿☎⏱‼️⏰⭕𐭩•ᡣ↓▼”ദ്ദി｡̀‧₊◡´ゝ☺‘’※●₍ᐢ₎ෆ-▫▪٩๑˃́ꇴ˂๑وԅ ˘ω˘ԅᴗ́و]+", "", text)  # 특수기호 제거
         text = re.sub(r"\s+", " ", text)  # 공백 정리
@@ -42,7 +46,8 @@ class BlogScraper(BaseDriver):
         text = text.strip()
 
         return text
-    
+
+
     def _remove_emojis(self, text: str) -> str:
         emoji_pattern = re.compile(
             "["                                     # 시작 괄호

@@ -11,6 +11,7 @@ class CommentWriter(BaseDriver):
         self.can_add_comment = False
         self.btn_comment = None
 
+
     def press_like_if_needed(self):
         post_1 = self.driver.find_element(By.ID, "post_1")
         area_sympathy = post_1.find_element(By.CSS_SELECTOR, ".area_sympathy")
@@ -25,9 +26,11 @@ class CommentWriter(BaseDriver):
         self.can_add_comment = True
         wait_random()
 
+
     def init_comment_button (self):
         post_1 = self.driver.find_element(By.ID, "post_1")
         self.btn_comment = post_1.find_element(By.CSS_SELECTOR, ".area_comment .btn_comment")
+
 
     def add_comment(self, text: str):
         self.btn_comment.click()

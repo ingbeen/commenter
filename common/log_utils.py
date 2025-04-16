@@ -23,6 +23,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+
 def api_log(response, user_content: str, comment: str):
     usage = response.usage
     user_content = user_content.replace('\n', ' / ')

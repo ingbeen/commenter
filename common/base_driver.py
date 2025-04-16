@@ -5,6 +5,7 @@ class BaseDriver:
     def __init__(self, driver):
         self.driver = driver
 
+
     def get(self, url: str):
         self.driver.get(url)
         logger.info(f"url = {url}")
