@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from common.base_driver import BaseDriver
+from common.constants import EXCLUDED_BLOG_IDS
 from common.log_utils import logger
 
 
@@ -21,7 +22,7 @@ class CommentScraper(BaseDriver):
 
             for el in blog_id_elements:
                 blog_id = el.text.strip()
-                if blog_id and blog_id != "smy375":
+                if blog_id and blog_id not in EXCLUDED_BLOG_IDS:
                     collected_ids.add(blog_id)
 
             logger.info(f"len(collected_ids) = {len(collected_ids)}")

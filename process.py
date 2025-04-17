@@ -3,6 +3,7 @@
 from api.generate_comment import generate_comment, truncate_text_to_token_limit, is_token_length_valid
 from naver.comment_writer import CommentWriter
 from naver.comment_scraper import CommentScraper
+from naver.buddy_scraper import BuddyScraper
 from naver.blog_scraper import BlogScraper
 from common.log_utils import error_log, logger
 from selenium.common.exceptions import NoSuchElementException
@@ -59,14 +60,14 @@ def _process_loop_blog(driver, recent_commenter_ids):
 
 
 def process_comments(driver):
-    comment_scraper = CommentScraper(driver)
-    recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
-    logger.info(f"recent_commenter_ids = {recent_commenter_ids}")
-
-    _process_loop_blog(driver, recent_commenter_ids)
-
     # comment_scraper = CommentScraper(driver)
     # recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
     # logger.info(f"recent_commenter_ids = {recent_commenter_ids}")
 
     # _process_loop_blog(driver, recent_commenter_ids)
+
+    buddy_scraper = BuddyScraper(driver)
+    recent_posting_buddy_ids = buddy_scraper.get_recent_posting_buddy_ids()
+    logger.info(f"recent_posting_buddy_ids = {recent_posting_buddy_ids}")
+
+    _process_loop_blog(driver, recent_posting_buddy_ids)
