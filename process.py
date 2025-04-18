@@ -60,11 +60,11 @@ def _process_loop_blog(driver, recent_commenter_ids):
 
 
 def process_comments(driver):
-    # comment_scraper = CommentScraper(driver)
-    # recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
-    # logger.info(f"recent_commenter_ids = {recent_commenter_ids}")
+    comment_scraper = CommentScraper(driver)
+    recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
+    logger.info(f"recent_commenter_ids = {recent_commenter_ids}")
 
-    # _process_loop_blog(driver, recent_commenter_ids)
+    _process_loop_blog(driver, recent_commenter_ids)
 
     buddy_scraper = BuddyScraper(driver)
     recent_posting_buddy_ids = buddy_scraper.get_recent_posting_buddy_ids()
