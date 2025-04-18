@@ -50,4 +50,4 @@ class CommentWriter(BaseDriver):
         u_cbox_btn_upload = u_cbox_write_box.find_element(By.CSS_SELECTOR, ".u_cbox_upload .u_cbox_btn_upload")
         u_cbox_btn_upload.click()
         logger.info(f"댓글 등록 버튼 클릭")
-        wait_random(min_sec=4, max_sec=6)
+        wait_random(min_sec=2, max_sec=4)
