@@ -1,11 +1,12 @@
 import re
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
-from common.base_driver import BaseDriver
+from driver.base_driver import BaseDriver
+from driver.driver_manager import DriverManager
 
 class BlogScraper(BaseDriver):
-    def __init__(self, driver):
-        super().__init__(driver)
+    def __init__(self, driver_manager: DriverManager):
+        super().__init__(driver_manager)
 
 
     def go_to_blog(self, blog_id: str):
@@ -16,19 +17,19 @@ class BlogScraper(BaseDriver):
 
 
     def get_post_header(self) -> str:
-        post_1 = self.driver.find_element(By.ID, "post_1")
+        post_1 = self.driver_manager.get_driver().find_element(By.ID, "post_1")
         span = post_1.find_element(By.CSS_SELECTOR, ".se-documentTitle .pcol1 span")
 
         return self._optimize_for_chatgpt(span.text)
 
 
     def get_post_content(self) -> str:
-        post_1 = self.driver.find_element(By.ID, "post_1")
+        post_1 = self.driver_manager.get_driver().find_element(By.ID, "post_1")
         se_text_paragraphs = post_1.find_elements(By.CSS_SELECTOR, ".se-main-container .se-text-paragraph")
 
         clean_texts = []
         for p in se_text_paragraphs:
-            html = p.get_attribute("outerHTML")
+            html = p.get_attribute("outerHTML") or ""
             soup = BeautifulSoup(html, "html.parser")
             text = soup.get_text(separator="", strip=True)
             text = self._optimize_for_chatgpt(text)
@@ -39,7 +40,7 @@ class BlogScraper(BaseDriver):
 
 
     def _optimize_for_chatgpt(self, text: str) -> str:
-        text = re.sub(r"[~!@$%^&*()_+={}\[\]:;\"'<>,.?/\\|`✓■▶♡♥☆★ㅜㅠㅎㅎㅋㄱ🅿☎⏱‼️⏰⭕𐭩•ᡣ↓▼”ദ്ദി｡̀‧₊◡´ゝ☺‘’※●₍ᐢ₎ෆ-▫▪٩๑˃́ꇴ˂๑وԅ ˘ω˘ԅᴗ́و]+", "", text)  # 특수기호 제거
+        text = re.sub(r"[~!@$%^&*()_+={}\[\]:;\"'<>,.?/\\|`✓■▶♡♥☆★ㅜㅠㅎㅎㅋㄱ🅿☎⏱♠【】▷▽‼️⭐☝⏰⭕𐭩•ᡣ↓▼”ദ്ദി｡̀‧₊◡´ゝ☺‘’※●₍ᐢ₎ෆ-▫▪٩๑˃́ꇴ˂๑وԅ ˘ω˘ԅᴗ́و･ﾟ˚]+", "", text)  # 특수기호 제거
         text = re.sub(r"\s+", " ", text)  # 공백 정리
         text = re.sub(r"[ㄱ-ㅎㅏ-ㅣ]+", "", text)  # 초성, 감탄사 제거
         text = self._remove_emojis(text)

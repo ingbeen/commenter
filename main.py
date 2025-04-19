@@ -1,17 +1,17 @@
-from naver.driver_factory import create_chrome_driver
+from driver.driver_manager import DriverManager
 from common.log_utils import error_log
-from process import process_comments
+from comment_process import CommentProcessor
 
 def run():
-    driver = None
     try:
-        driver = create_chrome_driver()
-        process_comments(driver)
+        driver_manager = DriverManager()
+        comment_processor = CommentProcessor(driver_manager)
+        comment_processor.run()
     except Exception as e:
         error_log(e)
     finally:
-        if driver:
-            driver.quit()
+        if driver_manager:
+            driver_manager.quit()
 
 if __name__ == "__main__":
     run()

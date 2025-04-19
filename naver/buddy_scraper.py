@@ -1,19 +1,20 @@
 from selenium.webdriver.common.by import By
-from common.base_driver import BaseDriver
+from driver.base_driver import BaseDriver
 from common.time_utils import wait_random
-from common.constants import EXCLUDED_BLOG_IDS
+from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID
 from common.log_utils import logger
+from driver.driver_manager import DriverManager
 
 
 class BuddyScraper(BaseDriver):
-    def __init__(self, driver):
-        super().__init__(driver)
+    def __init__(self, driver_manager: DriverManager):
+        super().__init__(driver_manager)
         self.buddy_list_manage = None
     
 
     def get_recent_posting_buddy_ids(self) -> list[str]:
         page = 1
-        limit = 300
+        limit = 500
         collected_ids = set()
 
         self._go_to_buddy_manage()
@@ -56,7 +57,7 @@ class BuddyScraper(BaseDriver):
         return list(collected_ids)
 
     def _go_to_buddy_manage(self):
-        url = (f"https://admin.blog.naver.com/smy375/buddy/manage")
+        url = (f"https://admin.blog.naver.com/{MY_BLOG_ID}/buddy/manage")
         self.get(url)
 
     def _click_selectbox_item_by_text(self, items, text: str):
@@ -67,7 +68,7 @@ class BuddyScraper(BaseDriver):
                 break
 
     def _switch_to_papermain_iframe(self):
-        self.driver.switch_to.default_content()
-        iframe = self.driver.find_element(By.ID, "papermain")
-        self.driver.switch_to.frame(iframe)
-        self.buddy_list_manage = self.driver.find_element(By.ID, "buddyListManageForm")
+        self.driver_manager.get_driver().switch_to.default_content()
+        iframe = self.driver_manager.get_driver().find_element(By.ID, "papermain")
+        self.driver_manager.get_driver().switch_to.frame(iframe)
+        self.buddy_list_manage = self.driver_manager.get_driver().find_element(By.ID, "buddyListManageForm")
