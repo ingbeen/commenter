@@ -54,7 +54,7 @@ class CommentProcessor:
 
             if "더이상 등록할 수 없습니다" in alert_text or self.alert_count >= 5:
                 self.driver_manager.quit()
-                sys.exit("자동화 중단: 댓글 제한 도달")
+                sys.exit(f"[자동화 중단] 네이버 댓글 제한 경고창")
         except NoSuchElementException as e:
             if '[id="post_1"]' in str(e) or 'id="post_1"' in str(e):
                 logger.info("예외처리 / post_1 없음")
@@ -85,11 +85,11 @@ class CommentProcessor:
                 self.driver_manager.restart_driver()
 
     def run(self):
-        # comment_scraper = CommentScraper(self.driver_manager)
-        # recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
-        # logger.info(f"최근 댓글 등록한 아이디 = {recent_commenter_ids}")
+        comment_scraper = CommentScraper(self.driver_manager)
+        recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
+        logger.info(f"최근 댓글 등록한 아이디 = {recent_commenter_ids}")
         
-        # self._process_loop_blog(recent_commenter_ids)
+        self._process_loop_blog(recent_commenter_ids)
 
         buddy_scraper = BuddyScraper(self.driver_manager)
         recent_posting_buddy_ids = buddy_scraper.get_recent_posting_buddy_ids()
