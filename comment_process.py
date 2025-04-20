@@ -25,15 +25,16 @@ class CommentProcessor:
             content = truncate_text_to_token_limit(content)
 
             if not is_token_length_valid(content):
-                logger.info("pass / is_token_length_valid = False")
+                logger.info("본문 글자수 적음")
                 return
 
             comment_writer = CommentWriter(self.driver_manager)
             comment_writer.press_like_if_needed()
             comment_writer.init_comment_button()
+            comment_writer.set_can_add_comment()
 
-            if not comment_writer.can_add_comment:
-                logger.info("pass / can_add_comment = False")
+            if not comment_writer.did_press_like or not comment_writer.is_under_comment_limit:
+                logger.info("댓글 등록 제외")
                 return
 
             comment = generate_comment(header, content)
@@ -75,12 +76,12 @@ class CommentProcessor:
     def run(self):
         comment_scraper = CommentScraper(self.driver_manager)
         recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
-        logger.info(f"recent_commenter_ids = {recent_commenter_ids}")
+        logger.info(f"최근 댓글 등록한 아이디 = {recent_commenter_ids}")
         
         self._process_loop_blog(recent_commenter_ids)
 
         buddy_scraper = BuddyScraper(self.driver_manager)
         recent_posting_buddy_ids = buddy_scraper.get_recent_posting_buddy_ids()
-        logger.info(f"recent_posting_buddy_ids = {recent_posting_buddy_ids}")
+        logger.info(f"서로이웃 중 최근 글 등록한 아이디 = {recent_posting_buddy_ids}")
         
         self._process_loop_blog(recent_posting_buddy_ids)

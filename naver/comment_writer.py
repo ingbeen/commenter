@@ -10,7 +10,8 @@ from driver.driver_manager import DriverManager
 class CommentWriter(BaseDriver):
     def __init__(self, driver_manager: DriverManager):
         super().__init__(driver_manager)
-        self.can_add_comment = False
+        self.did_press_like = False
+        self.is_under_comment_limit = False
         self.btn_comment = None
         self.post_1 = None
 
@@ -26,14 +27,23 @@ class CommentWriter(BaseDriver):
         
         u_likeit_list_btn.click()
         logger.info(f"공감 버튼 클릭")
-        self.can_add_comment = True
+        self.did_press_like = True
         wait_random()
 
-
-    def init_comment_button (self):
+    def init_comment_button(self):
         post_1 = self.driver_manager.get_driver().find_element(By.ID, "post_1")
         self.btn_comment = post_1.find_element(By.CSS_SELECTOR, ".area_comment .btn_comment")
 
+    def set_can_add_comment(self):
+        limit = 50
+        comment_text = self.btn_comment.find_element(By.CSS_SELECTOR, "#commentCount").text.strip()
+        try:
+            comment_count_int = int(comment_text)
+        except ValueError:
+            comment_count_int = 0
+
+        logger.info(f"comment_count_int = {comment_count_int}")
+        self.is_under_comment_limit = comment_count_int <= limit
 
     def add_comment(self, text: str):
         self.btn_comment.click()

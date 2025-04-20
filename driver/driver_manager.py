@@ -13,7 +13,7 @@ class DriverManager:
             self.driver.quit()
             wait_random()
         self.driver = self._create_chrome_driver()
-        logger.info("success_restart_driver")
+        logger.info("드라이버 재시작 성공")
 
     def get_driver(self) -> WebDriver:
         if self.driver is None:
