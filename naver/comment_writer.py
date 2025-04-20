@@ -70,6 +70,6 @@ class CommentWriter(BaseDriver):
             a.get_attribute("href").split("/")[-1] == MY_BLOG_ID
             for a in u_cbox_names
         )
-        logger.info(f"댓글 등록 성공 = {is_success}")
+        logger.info(f"댓글 등록 성공 여부 = {is_success}")
         
         return is_success

@@ -14,7 +14,7 @@ class BuddyScraper(BaseDriver):
 
     def get_recent_posting_buddy_ids(self) -> list[str]:
         page = 1
-        limit = 500
+        limit = 1000
         collected_ids = set()
 
         self._go_to_buddy_manage()

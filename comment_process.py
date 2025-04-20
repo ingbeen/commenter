@@ -5,7 +5,7 @@ from naver.comment_scraper import CommentScraper
 from naver.buddy_scraper import BuddyScraper
 from naver.blog_scraper import BlogScraper
 from common.log_utils import error_log, logger
-from selenium.common.exceptions import NoSuchElementException, UnexpectedAlertPresentException
+from selenium.common.exceptions import NoSuchElementException, UnexpectedAlertPresentException, NoAlertPresentException
 import sys
 
 class CommentProcessor:
@@ -42,10 +42,14 @@ class CommentProcessor:
             if is_success:
                 self.success_count += 1
         except UnexpectedAlertPresentException as e:
-            alert = self.driver_manager.get_driver().switch_to.alert
-            alert_text = alert.text
+            try:
+                alert = self.driver_manager.get_driver().switch_to.alert
+                alert_text = alert.text
+                alert.accept()
+            except NoAlertPresentException:
+                alert_text = "Alert창이 이미 닫혔습니다"
+            
             error_log(e, url)
-            alert.accept()
             self.alert_count += 1
 
             if "더이상 등록할 수 없습니다" in alert_text or self.alert_count >= 5:
@@ -53,11 +57,11 @@ class CommentProcessor:
                 sys.exit("자동화 중단: 댓글 제한 도달")
         except NoSuchElementException as e:
             if '[id="post_1"]' in str(e) or 'id="post_1"' in str(e):
-                logger.info("pass / post_1 없음")
+                logger.info("예외처리 / post_1 없음")
             elif '.area_sympathy' in str(e) or 'class="area_sympathy"' in str(e):
-                logger.info("pass / area_sympathy 없음")
+                logger.info("예외처리 / area_sympathy 없음")
             elif '.area_comment .btn_comment' in str(e) or 'class="btn_comment"' in str(e):
-                logger.info("pass / btn_comment 없음")
+                logger.info("예외처리 / btn_comment 없음")
             else:
                 error_log(e, url)
         except Exception as e:
@@ -81,14 +85,15 @@ class CommentProcessor:
                 self.driver_manager.restart_driver()
 
     def run(self):
-        comment_scraper = CommentScraper(self.driver_manager)
-        recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
-        logger.info(f"최근 댓글 등록한 아이디 = {recent_commenter_ids}")
+        # comment_scraper = CommentScraper(self.driver_manager)
+        # recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
+        # logger.info(f"최근 댓글 등록한 아이디 = {recent_commenter_ids}")
         
-        self._process_loop_blog(recent_commenter_ids)
+        # self._process_loop_blog(recent_commenter_ids)
 
         buddy_scraper = BuddyScraper(self.driver_manager)
         recent_posting_buddy_ids = buddy_scraper.get_recent_posting_buddy_ids()
+        # recent_posting_buddy_ids = ["beaute0122"]
         logger.info(f"서로이웃 중 최근 글 등록한 아이디 = {recent_posting_buddy_ids}")
         
         self._process_loop_blog(recent_posting_buddy_ids)
