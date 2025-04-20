@@ -65,12 +65,19 @@ class CommentProcessor:
 
     def _process_loop_blog(self, recent_commenter_ids):
         blog_scraper = BlogScraper(self.driver_manager)
+        last_restart_at = 0
 
         for blog_id in recent_commenter_ids:
             self._process_single_blog(blog_id, blog_scraper)
             logger.info(f"repeat_count = {self.repeat_count} / success_count = {self.success_count}")
             
-            if self.success_count != 0 and self.success_count % 30 == 0:
+            should_restart = (
+                self.success_count != 0 and
+                self.success_count % 30 == 0 and
+                self.success_count != last_restart_at
+            )
+            if should_restart:
+                last_restart_at = self.success_count
                 self.driver_manager.restart_driver()
 
     def run(self):

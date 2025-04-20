@@ -42,7 +42,7 @@ class CommentWriter(BaseDriver):
         except ValueError:
             comment_count_int = 0
 
-        logger.info(f"comment_count_int = {comment_count_int}")
+        logger.info(f"현재 포스팅글 댓글 수 = {comment_count_int}")
         self.is_under_comment_limit = comment_count_int <= limit
 
     def add_comment(self, text: str):
