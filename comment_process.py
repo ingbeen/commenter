@@ -43,11 +43,12 @@ class CommentProcessor:
                 self.success_count += 1
         except UnexpectedAlertPresentException as e:
             try:
+                alert_text = getattr(e, "alert_text", "alert_err")
+                logger.error(f"alert_text : {alert_text}")
                 alert = self.driver_manager.get_driver().switch_to.alert
-                alert_text = alert.text
                 alert.accept()
             except NoAlertPresentException:
-                alert_text = "Alert창이 이미 닫혔습니다"
+                pass
             
             error_log(e, url)
             self.alert_count += 1
@@ -93,7 +94,7 @@ class CommentProcessor:
 
         buddy_scraper = BuddyScraper(self.driver_manager)
         recent_posting_buddy_ids = buddy_scraper.get_recent_posting_buddy_ids()
-        # recent_posting_buddy_ids = ["beaute0122"]
+        # recent_posting_buddy_ids = ["sukim2909"]
         logger.info(f"서로이웃 중 최근 글 등록한 아이디 = {recent_posting_buddy_ids}")
         
         self._process_loop_blog(recent_posting_buddy_ids)

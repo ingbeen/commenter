@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 from driver.base_driver import BaseDriver
-from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID
+from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID, RECENT_COMMENTER_LIMIT
 from common.log_utils import logger
 from driver.driver_manager import DriverManager
 
@@ -12,10 +12,9 @@ class CommentScraper(BaseDriver):
 
     def get_recent_commenter_ids(self) -> list[str]:
         page = 1
-        limit = 100
         collected_ids = set()
 
-        while len(collected_ids) < limit:
+        while len(collected_ids) < RECENT_COMMENTER_LIMIT:
             self._go_to_comment_manage(page)
 
             table = self.driver_manager.get_driver().find_element(By.ID, "tableListById")

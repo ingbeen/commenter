@@ -4,7 +4,7 @@ from common.time_utils import wait_random
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from common.log_utils import logger
-from common.constants import MY_BLOG_ID
+from common.constants import MY_BLOG_ID, CAN_ADD_COMMENT_LIMIT
 from driver.driver_manager import DriverManager
 
 class CommentWriter(BaseDriver):
@@ -35,7 +35,6 @@ class CommentWriter(BaseDriver):
         self.btn_comment = post_1.find_element(By.CSS_SELECTOR, ".area_comment .btn_comment")
 
     def set_can_add_comment(self):
-        limit = 50
         comment_text = self.btn_comment.find_element(By.CSS_SELECTOR, "#commentCount").text.strip()
         try:
             comment_count_int = int(comment_text)
@@ -43,7 +42,7 @@ class CommentWriter(BaseDriver):
             comment_count_int = 0
 
         logger.info(f"현재 포스팅글 댓글 수 = {comment_count_int}")
-        self.is_under_comment_limit = comment_count_int <= limit
+        self.is_under_comment_limit = comment_count_int <= CAN_ADD_COMMENT_LIMIT
 
     def add_comment(self, text: str):
         self.btn_comment.click()

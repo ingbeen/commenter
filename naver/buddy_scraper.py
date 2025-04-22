@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 from driver.base_driver import BaseDriver
 from common.time_utils import wait_random
-from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID
+from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID, RECENT_POSTING_BUDDY_LIMIT
 from common.log_utils import logger
 from driver.driver_manager import DriverManager
 
@@ -14,7 +14,6 @@ class BuddyScraper(BaseDriver):
 
     def get_recent_posting_buddy_ids(self) -> list[str]:
         page = 1
-        limit = 500
         collected_ids = set()
 
         self._go_to_buddy_manage()
@@ -35,7 +34,7 @@ class BuddyScraper(BaseDriver):
         buudyall_items = buddysel_buudyall.find_elements(By.CSS_SELECTOR, "ul.selectbox-list li")
         self._click_selectbox_item_by_text(buudyall_items, "서로이웃")
 
-        while len(collected_ids) < limit:
+        while len(collected_ids) < RECENT_POSTING_BUDDY_LIMIT:
             self._switch_to_papermain_iframe()
             blog_links = self.buddy_list_manage.find_elements(By.CSS_SELECTOR, ".tbl_buddymanage tbody td.buddy a")
             for link in blog_links:
