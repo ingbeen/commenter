@@ -53,6 +53,7 @@ class CommentProcessor:
             error_log(e, url)
             self.alert_count += 1
 
+            logger.info(f"alert_count = {self.alert_count}")
             if "더이상 등록할 수 없습니다" in alert_text or self.alert_count >= 5:
                 self.driver_manager.quit()
                 sys.exit(f"[자동화 중단] 네이버 댓글 제한 경고창")
@@ -68,11 +69,11 @@ class CommentProcessor:
         except Exception as e:
             error_log(e, url)
 
-    def _process_loop_blog(self, recent_commenter_ids):
+    def _process_loop_blog(self, commenter_ids):
         blog_scraper = BlogScraper(self.driver_manager)
         # last_restart_at = 0
 
-        for blog_id in recent_commenter_ids:
+        for blog_id in commenter_ids:
             self._process_single_blog(blog_id, blog_scraper)
             logger.info(f"repeat_count = {self.repeat_count} / success_count = {self.success_count}")
             
@@ -88,13 +89,15 @@ class CommentProcessor:
     def run(self):
         comment_scraper = CommentScraper(self.driver_manager)
         recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
-        logger.info(f"최근 댓글 등록한 아이디 = {recent_commenter_ids}")
+        # logger.info(f"최근 댓글 등록한 아이디 = {recent_commenter_ids}")
         
         self._process_loop_blog(recent_commenter_ids)
 
         buddy_scraper = BuddyScraper(self.driver_manager)
         recent_posting_buddy_ids = buddy_scraper.get_recent_posting_buddy_ids()
+        filtered_ids = list(set(recent_posting_buddy_ids) - set(recent_commenter_ids))
         # recent_posting_buddy_ids = ["sukim2909"]
-        logger.info(f"서로이웃 중 최근 글 등록한 아이디 = {recent_posting_buddy_ids}")
+        # logger.info(f"서로이웃 중 최근 글 등록한 아이디 = {filtered_ids}")
+        logger.info(f"len(filtered_ids) = {len(filtered_ids)}")
         
-        self._process_loop_blog(recent_posting_buddy_ids)
+        self._process_loop_blog(filtered_ids)
