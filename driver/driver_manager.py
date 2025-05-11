@@ -3,6 +3,7 @@ from selenium import webdriver
 from common.time_utils import wait_random
 from common.log_utils import logger
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.chrome.service import Service
 
 class DriverManager:
     def __init__(self):
@@ -27,12 +28,12 @@ class DriverManager:
 
     def _create_chrome_driver(self):
         options = webdriver.ChromeOptions()
-        
-        user_name = os.path.basename(os.path.expanduser("~"))
-        user_data_dir = os.path.expanduser(fr"C:\Users\{user_name}\AppData\Local\Google\Chrome\User Data")
-        options.add_argument(f"--user-data-dir={user_data_dir}")
-        options.add_argument("--profile-directory=Default")
-        # options.add_argument("--start-maximized")
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
-        return webdriver.Chrome(options=options)
+        custom_user_data = r"C:\chrome-driver\chrome-user-data"
+        os.makedirs(custom_user_data, exist_ok=True)
+        options.add_argument(f"--user-data-dir={custom_user_data}")
+
+        driver_path = r"C:\chrome-driver\chromedriver-win64\chromedriver.exe"
+        service = Service(executable_path=driver_path)
+
+        return webdriver.Chrome(service=service, options=options)
