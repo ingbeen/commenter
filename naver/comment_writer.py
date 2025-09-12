@@ -52,9 +52,9 @@ class CommentWriter(BaseDriver):
             EC.visibility_of_element_located((By.CSS_SELECTOR, ".u_cbox_write_box"))
         )
 
-        label_area = u_cbox_write_box.find_element(By.CSS_SELECTOR, '.u_cbox_inbox label')
-        label_area.click()
-        wait_random()
+        # label_area = u_cbox_write_box.find_element(By.CSS_SELECTOR, '.u_cbox_inbox label')
+        # label_area.click()
+        # wait_random()
         
         write_area = u_cbox_write_box.find_element(By.CSS_SELECTOR, '.u_cbox_inbox div[contenteditable="true"]')
         write_area.send_keys(text)

@@ -33,7 +33,7 @@ class DriverManager:
         os.makedirs(custom_user_data, exist_ok=True)
         options.add_argument(f"--user-data-dir={custom_user_data}")
 
-        driver_path = r"C:\chrome-driver\chromedriver-win64\chromedriver.exe"
-        service = Service(executable_path=driver_path)
+        # driver_path = r"C:\chrome-driver\chromedriver-win64\chromedriver.exe"
+        # service = Service(executable_path=driver_path)
 
-        return webdriver.Chrome(service=service, options=options)
+        return webdriver.Chrome(options=options)
