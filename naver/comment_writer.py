@@ -19,8 +19,8 @@ class CommentWriter(BaseDriver):
     def press_like_if_needed(self):
         post_1 = self.driver_manager.get_driver().find_element(By.ID, "post_1")
         area_sympathy = post_1.find_element(By.CSS_SELECTOR, ".area_sympathy")
-        u_likeit_list_module = area_sympathy.find_element(By.CSS_SELECTOR, ":scope > .u_likeit_list_module")
-        u_likeit_list_btn = u_likeit_list_module.find_element(By.CSS_SELECTOR, "a.u_likeit_list_btn")
+        u_likeit_list_module = area_sympathy.find_element(By.CSS_SELECTOR, ".u_likeit_list_module")
+        u_likeit_list_btn = u_likeit_list_module.find_element(By.CSS_SELECTOR, "a.u_likeit_button")
         if "on" in u_likeit_list_btn.get_attribute("class").split():
             logger.info(f"공감 버튼 눌러져 있음")
             return
