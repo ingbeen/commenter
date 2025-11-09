@@ -8,13 +8,32 @@ from openai.types.chat import ChatCompletionMessageParam
 
 load_dotenv()
 
-# API 키 불러오기
+# OpenAI API 클라이언트 초기화
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 
 def generate_comment(header: str, content: str) -> str:
+    """
+    OpenAI GPT-4o-mini를 사용하여 블로그 게시글에 대한 댓글 생성
+
+    제주도에 사는 30대 여성이라는 페르소나를 기반으로,
+    자연스럽고 공감 가는 댓글을 생성합니다.
+
+    Args:
+        header: 블로그 게시글 제목
+        content: 블로그 게시글 본문 (토큰 제한 적용됨)
+
+    Returns:
+        str: 생성된 댓글
+    """
+    # 사용자 프롬프트 구성 (제목 + 본문)
     user_content = f"[제목]\n" f"{header}\n\n" f"[본문]\n" f"{content}"
+
+    # 시스템 프롬프트: 댓글 생성 규칙 정의
+    # - 페르소나: 제주도에 사는 30대 여성
+    # - 말투: 자연스럽고 부드러운 존댓말
+    # - 제한 사항: 이모지, 가족 언급, 반려동물 언급, 장소 방문 가정 금지
     prompt: list[ChatCompletionMessageParam] = [
         {
             "role": "system",
@@ -40,10 +59,12 @@ def generate_comment(header: str, content: str) -> str:
         {"role": "user", "content": user_content},
     ]
 
+    # OpenAI API 호출
     response = client.chat.completions.create(
         model="gpt-4o-mini", messages=prompt, temperature=0.8, max_tokens=300
     )
 
+    # 생성된 댓글 추출 및 로깅
     comment = response.choices[0].message.content.strip()
     api_log(response, user_content, comment)
 
@@ -51,8 +72,23 @@ def generate_comment(header: str, content: str) -> str:
 
 
 def truncate_text_to_token_limit(text: str, max_tokens: int = 2000) -> str:
+    """
+    텍스트를 지정된 토큰 수로 자르기
+
+    OpenAI API 요청 시 토큰 제한을 초과하지 않도록
+    텍스트를 최대 토큰 수로 제한합니다.
+
+    Args:
+        text: 자를 텍스트
+        max_tokens: 최대 토큰 수
+
+    Returns:
+        str: 토큰 제한에 맞게 잘린 텍스트
+    """
     enc = tiktoken.encoding_for_model("gpt-4")
     tokens = enc.encode(text)
+
+    # 토큰 수가 제한을 초과하면 잘라내기
     if len(tokens) > max_tokens:
         tokens = tokens[:max_tokens]
         text = enc.decode(tokens)
@@ -61,6 +97,18 @@ def truncate_text_to_token_limit(text: str, max_tokens: int = 2000) -> str:
 
 
 def is_token_length_valid(text: str, min_tokens=300) -> bool:
+    """
+    텍스트의 토큰 수가 최소 기준을 만족하는지 확인
+
+    본문이 너무 짧은 게시글을 필터링하기 위해 사용됩니다.
+
+    Args:
+        text: 검증할 텍스트
+        min_tokens: 최소 토큰 수
+
+    Returns:
+        bool: 최소 토큰 수 이상이면 True, 미만이면 False
+    """
     enc = tiktoken.encoding_for_model("gpt-4")
     num_tokens = len(enc.encode(text))
 
