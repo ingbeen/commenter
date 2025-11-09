@@ -1,8 +1,8 @@
 from selenium.webdriver.common.by import By
-from driver.base_driver import BaseDriver
-from common.time_utils import wait_random
+
 from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID
-from common.log_utils import logger
+from common.time_utils import wait_random
+from driver.base_driver import BaseDriver
 from driver.driver_manager import DriverManager
 
 # 서로이웃 최근 게시자 최대 수집 개수

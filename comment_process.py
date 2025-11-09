@@ -1,27 +1,29 @@
-from api.generate_comment import (
-    truncate_text_to_token_limit,
-    is_token_length_valid,
-)
-from driver.driver_manager import DriverManager
-from naver.comment_writer import CommentWriter
-from naver.comment_scraper import CommentScraper
-from naver.buddy_scraper import BuddyScraper
-from naver.blog_scraper import BlogScraper
-from common.log_utils import error_log, logger
-from common.human_behavior import (
-    simulate_reading,
-    BOT_EVASION_ENABLED,
-    TOTAL_STAY_DURATION_MIN,
-    TOTAL_STAY_DURATION_MAX,
-)
+import random
+import sys
+
+import openai
 from selenium.common.exceptions import (
+    NoAlertPresentException,
     NoSuchElementException,
     UnexpectedAlertPresentException,
-    NoAlertPresentException,
 )
-import openai
-import sys
-import random
+
+from api.generate_comment import (
+    is_token_length_valid,
+    truncate_text_to_token_limit,
+)
+from common.human_behavior import (
+    BOT_EVASION_ENABLED,
+    TOTAL_STAY_DURATION_MAX,
+    TOTAL_STAY_DURATION_MIN,
+    simulate_reading,
+)
+from common.log_utils import error_log, logger
+from driver.driver_manager import DriverManager
+from naver.blog_scraper import BlogScraper
+from naver.buddy_scraper import BuddyScraper
+from naver.comment_scraper import CommentScraper
+from naver.comment_writer import CommentWriter
 
 
 class CommentProcessor:
@@ -141,7 +143,7 @@ class CommentProcessor:
                 or self.alert_count >= self.ALERT_THRESHOLD
             ):
                 self.driver_manager.quit()
-                sys.exit(f"[자동화 중단] 네이버 댓글 제한 경고창")
+                sys.exit("[자동화 중단] 네이버 댓글 제한 경고창")
         except NoSuchElementException as e:
             # 자주 발생하는 요소 누락 예외는 로그만 기록하고 계속 진행
             if '[id="post_1"]' in str(e) or 'id="post_1"' in str(e):

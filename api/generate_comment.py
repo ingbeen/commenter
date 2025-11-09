@@ -1,10 +1,11 @@
 import os
+
 import openai
 import tiktoken
-
 from dotenv import load_dotenv
-from common.log_utils import api_log, logger
 from openai.types.chat import ChatCompletionMessageParam
+
+from common.log_utils import api_log
 
 load_dotenv()
 

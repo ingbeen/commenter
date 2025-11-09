@@ -2,7 +2,6 @@ import logging
 import os
 import traceback
 from typing import Optional
-from openai.types.chat import ChatCompletionMessageParam
 
 # 로그 저장 디렉토리 설정
 LOG_DIR = r"C:\logs"

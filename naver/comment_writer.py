@@ -1,15 +1,16 @@
-from selenium.webdriver.common.by import By
-from driver.base_driver import BaseDriver
-from common.time_utils import wait_random
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from common.log_utils import logger
-from common.constants import MY_BLOG_ID
-from driver.driver_manager import DriverManager
-from api.generate_comment import generate_comment
 import random
 import time
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+from api.generate_comment import generate_comment
+from common.constants import MY_BLOG_ID
+from common.log_utils import logger
+from common.time_utils import wait_random
+from driver.base_driver import BaseDriver
+from driver.driver_manager import DriverManager
 
 # ============================================================================
 # 상수 정의
@@ -65,12 +66,12 @@ class CommentWriter(BaseDriver):
 
         # 2. 공감 버튼이 이미 클릭된 상태인지 확인
         if "on" in u_likeit_list_btn.get_attribute("class").split():
-            logger.info(f"공감 버튼 눌러져 있음")
+            logger.info("공감 버튼 눌러져 있음")
             return
 
         # 3. 공감 버튼 클릭
         u_likeit_list_btn.click()
-        logger.info(f"공감 버튼 클릭")
+        logger.info("공감 버튼 클릭")
         self.did_press_like = True
 
         # 4. 랜덤 대기

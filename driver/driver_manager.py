@@ -1,9 +1,9 @@
 import os
+
 from selenium import webdriver
-from common.time_utils import wait_random
-from common.log_utils import logger
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.chrome.service import Service
+
+from common.time_utils import wait_random
 
 
 class DriverManager:
