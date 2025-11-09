@@ -91,7 +91,6 @@ class CommentProcessor:
 
     def _process_loop_blog(self, commenter_ids):
         blog_scraper = BlogScraper(self.driver_manager)
-        # last_restart_at = 0
 
         for blog_id in commenter_ids:
             self._process_single_blog(blog_id, blog_scraper)
@@ -99,27 +98,15 @@ class CommentProcessor:
                 f"repeat_count = {self.repeat_count} / success_count = {self.success_count}"
             )
 
-            # should_restart = (
-            #     self.success_count != 0 and
-            #     self.success_count % 30 == 0 and
-            #     self.success_count != last_restart_at
-            # )
-            # if should_restart:
-            #     last_restart_at = self.success_count
-            #     self.driver_manager.restart_driver()
-
     def run(self):
         comment_scraper = CommentScraper(self.driver_manager)
         recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
-        # logger.info(f"최근 댓글 등록한 아이디 = {recent_commenter_ids}")
 
         self._process_loop_blog(recent_commenter_ids)
 
         buddy_scraper = BuddyScraper(self.driver_manager)
         recent_posting_buddy_ids = buddy_scraper.get_recent_posting_buddy_ids()
         filtered_ids = list(set(recent_posting_buddy_ids) - set(recent_commenter_ids))
-        # recent_posting_buddy_ids = ["sukim2909"]
-        # logger.info(f"서로이웃 중 최근 글 등록한 아이디 = {filtered_ids}")
         logger.info(f"len(filtered_ids) = {len(filtered_ids)}")
 
         self._process_loop_blog(filtered_ids)
