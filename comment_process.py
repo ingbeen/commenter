@@ -14,6 +14,7 @@ from selenium.common.exceptions import (
     UnexpectedAlertPresentException,
     NoAlertPresentException,
 )
+import openai
 import sys
 
 
@@ -53,6 +54,11 @@ class CommentProcessor:
             is_success = comment_writer.add_comment(comment)
             if is_success:
                 self.success_count += 1
+        except openai.RateLimitError as e:
+            error_log(e, url)
+            logger.error("[자동화 중단] OpenAI API Rate Limit 초과")
+            self.driver_manager.quit()
+            sys.exit("[자동화 중단] OpenAI API Rate Limit 초과")
         except UnexpectedAlertPresentException as e:
             try:
                 alert_text = getattr(e, "alert_text", "alert_err")

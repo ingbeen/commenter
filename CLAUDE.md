@@ -79,8 +79,8 @@ main.py (진입점)
 ### naver/ - 네이버 블로그 특화 모듈
 
 - [naver/blog_scraper.py](naver/blog_scraper.py): 블로그 게시글 제목/본문 추출, HTML 파싱, 텍스트 정제
-- [naver/comment_scraper.py](naver/comment_scraper.py): 내 블로그의 최근 댓글 작성자 ID 수집 (최대 200개)
-- [naver/buddy_scraper.py](naver/buddy_scraper.py): 서로이웃 중 최근 게시글 작성자 ID 수집 (최대 500개)
+- [naver/comment_scraper.py](naver/comment_scraper.py): 내 블로그의 최근 댓글 작성자 ID 수집
+- [naver/buddy_scraper.py](naver/buddy_scraper.py): 서로이웃 중 최근 게시글 작성자 ID 수집
 - [naver/comment_writer.py](naver/comment_writer.py): 공감 버튼 클릭 및 댓글 작성, 댓글 수 제한 확인
 
 ### api/ - OpenAI API 통합
@@ -95,24 +95,13 @@ main.py (진입점)
 
 ## 프로젝트 특화 규칙
 
-### 댓글 생성 규칙 ([api/generate_comment.py](api/generate_comment.py))
-
-OpenAI API 프롬프트에 다음 규칙 적용:
-- **페르소나**: 30대 여자, 제주도 거주
-- **길이**: 2-3문장, 30-70자 한글
-- **금지사항**:
-  - 이모티콘/이모지
-  - 광고성 표현
-  - 반려동물/가족 언급
-  - 제주도 거주 설정 위반 표현
-- **말투**: 자연스럽고 가벼운 말투
-
 ### 안전 장치
 
 - **댓글 수 제한**: 100개 이하 게시글만 댓글 작성 ([naver/comment_writer.py](naver/comment_writer.py))
 - **공감 버튼 우선**: 공감 버튼 미클릭 시 댓글 작성 제외
 - **토큰 제한**: 본문 토큰 수 300개 미만 시 제외 ([api/generate_comment.py](api/generate_comment.py))
 - **Alert 제한**: Alert 5회 이상 시 자동 중단 ([comment_process.py](comment_process.py))
+- **API Rate Limit 처리**: OpenAI API Rate Limit 초과 시 즉시 프로그램 중단 ([comment_process.py](comment_process.py))
 
 ### 제외 대상 관리 ([common/constants.py](common/constants.py))
 
@@ -124,11 +113,11 @@ OpenAI API 프롬프트에 다음 규칙 적용:
 
 ### 1. 최근 댓글 작성자 처리 ([comment_process.py](comment_process.py))
 
-최근 댓글 작성자 200명을 수집한 후, 각 블로그를 방문하여 제목/본문을 추출하고 댓글을 생성하여 작성합니다.
+최근 댓글 작성자 수집한 후, 각 블로그를 방문하여 제목/본문을 추출하고 댓글을 생성하여 작성합니다.
 
 ### 2. 서로이웃 최근 게시자 처리 ([comment_process.py](comment_process.py))
 
-서로이웃 중 최근 게시자 500명을 수집하고, 이미 처리한 ID를 제외한 후 동일한 댓글 작성 프로세스를 반복합니다.
+서로이웃 중 최근 게시자 수집하고, 이미 처리한 ID를 제외한 후 동일한 댓글 작성 프로세스를 반복합니다.
 
 ### 3. 공감 버튼 + 댓글 작성 순서 ([naver/comment_writer.py](naver/comment_writer.py))
 
@@ -139,6 +128,10 @@ OpenAI API 프롬프트에 다음 규칙 적용:
 - **NoSuchElementException**: 로그만 기록하고 계속 진행 (흔한 예외)
 - **네이버 댓글 제한 Alert**: 즉시 중단 (하루 댓글 제한 도달)
 - **Alert 5회 이상**: 자동 중단 (비정상 상태)
+- **OpenAI RateLimitError**: 즉시 중단 (API 요금 한도 초과 또는 요청 제한)
+  - 예외 발생 시 에러 로그 기록
+  - WebDriver 종료
+  - 프로그램 즉시 중단 (`sys.exit()`)
 
 ## Windows 특화 사항
 
@@ -154,14 +147,9 @@ OpenAI API 프롬프트에 다음 규칙 적용:
 
 ### 코딩 스타일
 
+- **코드 포맷터**: 이 프로젝트는 **Black** 포맷터를 사용합니다. 모든 Python 코드는 Black 스타일 가이드를 따라 작성되어야 합니다.
 - **이모지 사용 금지**: 코드, 주석, 로그 메시지 등 모든 곳에서 이모지 사용을 피하세요
 - **복잡한 로직 주석 처리**: 여러 단계의 처리 흐름이 있는 복잡한 코드 구현 시, 각 단계별로 넘버링 주석을 추가하여 가독성을 높이세요
-  ```python
-  # 1. 데이터 수집
-  # 2. 데이터 검증
-  # 3. 데이터 가공
-  # 4. 결과 반환
-  ```
 
 ### 수정 제한 파일
 

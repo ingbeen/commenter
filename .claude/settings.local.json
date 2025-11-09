@@ -3,7 +3,13 @@
     "allow": [
       "Bash(cat:*)",
       "Bash(tree:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(python:*)",
+      "Bash(pip:*)",
+      "Bash(git:*)",
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "Bash(black:*)"
     ],
     "deny": [],
     "ask": []
