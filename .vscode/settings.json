@@ -11,6 +11,11 @@
     "python.analysis.typeCheckingMode": "basic",
     // (5) 저장 시 전체 포맷도 함께
     "editor.formatOnSave": true,
+    // (6) Black 포맷터 설정
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    },
     "python.analysis.diagnosticSeverityOverrides": {
         "reportOptionalMemberAccess": "none"
     }

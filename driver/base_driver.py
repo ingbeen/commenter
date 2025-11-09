@@ -2,6 +2,7 @@ from common.time_utils import wait_random
 from common.log_utils import logger
 from driver.driver_manager import DriverManager
 
+
 class BaseDriver:
     def __init__(self, driver_manager: DriverManager):
         self.driver_manager = driver_manager

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "Bash(echo:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "outputStyle": "korean"
+}

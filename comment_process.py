@@ -1,12 +1,21 @@
-from api.generate_comment import generate_comment, truncate_text_to_token_limit, is_token_length_valid
+from api.generate_comment import (
+    generate_comment,
+    truncate_text_to_token_limit,
+    is_token_length_valid,
+)
 from driver.driver_manager import DriverManager
 from naver.comment_writer import CommentWriter
 from naver.comment_scraper import CommentScraper
 from naver.buddy_scraper import BuddyScraper
 from naver.blog_scraper import BlogScraper
 from common.log_utils import error_log, logger
-from selenium.common.exceptions import NoSuchElementException, UnexpectedAlertPresentException, NoAlertPresentException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    UnexpectedAlertPresentException,
+    NoAlertPresentException,
+)
 import sys
+
 
 class CommentProcessor:
     def __init__(self, driver_manager: DriverManager):
@@ -14,10 +23,10 @@ class CommentProcessor:
         self.repeat_count = 0
         self.success_count = 0
         self.alert_count = 0
-    
+
     def _process_single_blog(self, blog_id, blog_scraper):
         self.repeat_count += 1
-        
+
         try:
             url = blog_scraper.go_to_blog(blog_id)
             header = blog_scraper.get_post_header()
@@ -33,7 +42,10 @@ class CommentProcessor:
             comment_writer.init_comment_button()
             comment_writer.set_can_add_comment()
 
-            if not comment_writer.did_press_like or not comment_writer.is_under_comment_limit:
+            if (
+                not comment_writer.did_press_like
+                or not comment_writer.is_under_comment_limit
+            ):
                 logger.info("댓글 등록 제외")
                 return
 
@@ -49,21 +61,23 @@ class CommentProcessor:
                 alert.accept()
             except NoAlertPresentException:
                 pass
-            
+
             error_log(e, url)
             self.alert_count += 1
 
-            logger.info(f"alert_count = {self.alert_count}")
+            logger.error(f"alert_count = {self.alert_count}")
             if "더이상 등록할 수 없습니다" in alert_text or self.alert_count >= 5:
                 self.driver_manager.quit()
                 sys.exit(f"[자동화 중단] 네이버 댓글 제한 경고창")
         except NoSuchElementException as e:
             if '[id="post_1"]' in str(e) or 'id="post_1"' in str(e):
-                logger.info("예외처리 / post_1 없음")
-            elif '.area_sympathy' in str(e) or 'class="area_sympathy"' in str(e):
-                logger.info("예외처리 / area_sympathy 없음")
-            elif '.area_comment .btn_comment' in str(e) or 'class="btn_comment"' in str(e):
-                logger.info("예외처리 / btn_comment 없음")
+                logger.error("예외처리 / post_1 없음")
+            elif ".area_sympathy" in str(e) or 'class="area_sympathy"' in str(e):
+                logger.error("예외처리 / area_sympathy 없음")
+            elif ".area_comment .btn_comment" in str(e) or 'class="btn_comment"' in str(
+                e
+            ):
+                logger.error("예외처리 / btn_comment 없음")
             else:
                 error_log(e, url)
         except Exception as e:
@@ -75,8 +89,10 @@ class CommentProcessor:
 
         for blog_id in commenter_ids:
             self._process_single_blog(blog_id, blog_scraper)
-            logger.info(f"repeat_count = {self.repeat_count} / success_count = {self.success_count}")
-            
+            logger.info(
+                f"repeat_count = {self.repeat_count} / success_count = {self.success_count}"
+            )
+
             # should_restart = (
             #     self.success_count != 0 and
             #     self.success_count % 30 == 0 and
@@ -90,7 +106,7 @@ class CommentProcessor:
         comment_scraper = CommentScraper(self.driver_manager)
         recent_commenter_ids = comment_scraper.get_recent_commenter_ids()
         # logger.info(f"최근 댓글 등록한 아이디 = {recent_commenter_ids}")
-        
+
         self._process_loop_blog(recent_commenter_ids)
 
         buddy_scraper = BuddyScraper(self.driver_manager)
@@ -99,5 +115,5 @@ class CommentProcessor:
         # recent_posting_buddy_ids = ["sukim2909"]
         # logger.info(f"서로이웃 중 최근 글 등록한 아이디 = {filtered_ids}")
         logger.info(f"len(filtered_ids) = {len(filtered_ids)}")
-        
+
         self._process_loop_blog(filtered_ids)

@@ -17,8 +17,8 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
         logging.FileHandler(log_file_path, encoding="utf-8"),
-        logging.StreamHandler()  # 콘솔 출력도 포함
-    ]
+        logging.StreamHandler(),  # 콘솔 출력도 포함
+    ],
 )
 
 logger = logging.getLogger(__name__)
@@ -26,14 +26,14 @@ logger = logging.getLogger(__name__)
 
 def api_log(response, user_content: str, comment: str):
     usage = response.usage
-    user_content = user_content.replace('\n', ' / ')
+    user_content = user_content.replace("\n", " / ")
     msg = (
         "[API 사용로그]\n"
         f"user_content: {user_content}\n"
         f"comment: {comment}\n"
         f"총 토큰: {usage.total_tokens} / 입력: {usage.prompt_tokens} / 출력: {usage.completion_tokens}"
     )
-    
+
     logger.info(msg)
 
 

@@ -2,6 +2,7 @@ from driver.driver_manager import DriverManager
 from common.log_utils import error_log
 from comment_process import CommentProcessor
 
+
 def run():
     try:
         driver_manager = DriverManager()
@@ -12,6 +13,7 @@ def run():
     finally:
         if driver_manager:
             driver_manager.quit()
+
 
 if __name__ == "__main__":
     run()
