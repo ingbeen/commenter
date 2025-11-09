@@ -10,7 +10,9 @@
       "Bash(ls:*)",
       "Bash(cd:*)",
       "Bash(black:*)",
-      "Bash(.venv/Scripts/python.exe -m black naver/comment_scraper.py)"
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(python.exe:*)",
+      "Bash(pip install:*)"
     ],
     "deny": [],
     "ask": []

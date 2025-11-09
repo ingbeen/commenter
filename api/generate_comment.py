@@ -12,6 +12,9 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
+# tiktoken 인코더 캐싱 (성능 최적화)
+GPT4_ENCODER = tiktoken.encoding_for_model("gpt-4")
+
 
 def generate_comment(header: str, content: str) -> str:
     """
@@ -85,13 +88,12 @@ def truncate_text_to_token_limit(text: str, max_tokens: int = 2000) -> str:
     Returns:
         str: 토큰 제한에 맞게 잘린 텍스트
     """
-    enc = tiktoken.encoding_for_model("gpt-4")
-    tokens = enc.encode(text)
+    tokens = GPT4_ENCODER.encode(text)
 
     # 토큰 수가 제한을 초과하면 잘라내기
     if len(tokens) > max_tokens:
         tokens = tokens[:max_tokens]
-        text = enc.decode(tokens)
+        text = GPT4_ENCODER.decode(tokens)
 
     return text
 
@@ -109,7 +111,6 @@ def is_token_length_valid(text: str, min_tokens=300) -> bool:
     Returns:
         bool: 최소 토큰 수 이상이면 True, 미만이면 False
     """
-    enc = tiktoken.encoding_for_model("gpt-4")
-    num_tokens = len(enc.encode(text))
+    num_tokens = len(GPT4_ENCODER.encode(text))
 
     return min_tokens <= num_tokens

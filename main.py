@@ -4,6 +4,7 @@ from comment_process import CommentProcessor
 
 
 def run():
+    driver_manager = None
     try:
         driver_manager = DriverManager()
         comment_processor = CommentProcessor(driver_manager)

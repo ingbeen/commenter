@@ -39,6 +39,8 @@ class CommentProcessor:
         alert_count (int): 발생한 Alert 예외 횟수
     """
 
+    ALERT_THRESHOLD = 5
+
     def __init__(self, driver_manager: DriverManager):
         """
         CommentProcessor 초기화
@@ -133,8 +135,11 @@ class CommentProcessor:
             self.alert_count += 1
 
             logger.error(f"alert_count = {self.alert_count}")
-            # Alert가 일정 횟수 이상 발생하거나 "더이상 등록할 수 없습니다" 메시지 발생 시 중단
-            if "더이상 등록할 수 없습니다" in alert_text or self.alert_count >= 5:
+            # Alert가 임계값 이상 발생하거나 "더이상 등록할 수 없습니다" 메시지 발생 시 중단
+            if (
+                "더이상 등록할 수 없습니다" in alert_text
+                or self.alert_count >= self.ALERT_THRESHOLD
+            ):
                 self.driver_manager.quit()
                 sys.exit(f"[자동화 중단] 네이버 댓글 제한 경고창")
         except NoSuchElementException as e:
