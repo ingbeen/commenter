@@ -33,4 +33,8 @@ class DriverManager:
         os.makedirs(custom_user_data, exist_ok=True)
         options.add_argument(f"--user-data-dir={custom_user_data}")
 
+        # Chrome 로그 억제 (콘솔 ERROR 메시지 제거)
+        options.add_argument("--log-level=3")
+        options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
         return webdriver.Chrome(options=options)

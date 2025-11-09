@@ -21,22 +21,18 @@ from common.log_utils import logger
 BOT_EVASION_ENABLED = True
 
 # 전체 체류시간 설정 (초)
-TOTAL_STAY_DURATION_MIN = 30
-TOTAL_STAY_DURATION_MAX = 60
-
-# 초기 페이지 체류 시간 (초)
-INITIAL_PAGE_WAIT_MIN = 2.0
-INITIAL_PAGE_WAIT_MAX = 4.0
+TOTAL_STAY_DURATION_MIN = 20
+TOTAL_STAY_DURATION_MAX = 40
 
 # 스크롤 구간별 읽기 시간 (초)
 READING_PAUSE_MIN = 1.0
 READING_PAUSE_MAX = 3.0
 
 # 스크롤 설정
-SCROLL_SECTIONS_MIN = 10
-SCROLL_SECTIONS_MAX = 15
-SCROLL_PIXEL_MIN = 1000
-SCROLL_PIXEL_MAX = 2000
+SCROLL_SECTIONS_MIN = 8
+SCROLL_SECTIONS_MAX = 12
+SCROLL_PIXEL_MIN = 700
+SCROLL_PIXEL_MAX = 1500
 
 # 확률 설정
 REVERSE_SCROLL_PROBABILITY = 0.1  # 역스크롤 확률
@@ -90,15 +86,14 @@ def simulate_reading(driver, target_duration, btn_comment=None):
     처리 흐름:
     1. 목표 체류시간 설정 및 시작 시간 기록
     2. 페이지 상단으로 이동
-    3. 초기 페이지 체류
-    4. 스크롤 구간별 반복:
+    3. 스크롤 구간별 반복:
        - 부드러운 스크롤 이동
        - 페이지 맨 아래 도달 확인 (도달 시 반복 중단)
        - 구간별 읽기 시간 체류
        - 확률적으로 역스크롤
-    5. 경과 시간 계산 및 부족한 시간 추가 대기
-    6. 총 소요 시간 로그 출력
-    7. 댓글 버튼 위치로 스크롤 이동
+    4. 경과 시간 계산 및 부족한 시간 추가 대기
+    5. 총 소요 시간 로그 출력
+    6. 댓글 버튼 위치로 스크롤 이동
 
     Args:
         driver: Selenium WebDriver 인스턴스
@@ -113,40 +108,34 @@ def simulate_reading(driver, target_duration, btn_comment=None):
     logger.info("페이지 상단으로 이동")
     wait_random(min_sec=0.3, max_sec=0.7)
 
-    # 2. 초기 페이지 체류
-    logger.info(
-        f"초기 페이지 체류: {INITIAL_PAGE_WAIT_MIN:.1f}~{INITIAL_PAGE_WAIT_MAX:.1f}초"
-    )
-    wait_random(min_sec=INITIAL_PAGE_WAIT_MIN, max_sec=INITIAL_PAGE_WAIT_MAX)
-
-    # 3. 스크롤 구간 수 결정
+    # 2. 스크롤 구간 수 결정
     sections = random.randint(SCROLL_SECTIONS_MIN, SCROLL_SECTIONS_MAX)
 
-    # 4. 각 구간별 스크롤 및 읽기 시뮬레이션
+    # 3. 각 구간별 스크롤 및 읽기 시뮬레이션
     for i in range(sections):
-        # 4-1. 부드러운 스크롤 이동
+        # 3-1. 부드러운 스크롤 이동
         scroll_amount = random.randint(SCROLL_PIXEL_MIN, SCROLL_PIXEL_MAX)
         smooth_scroll(driver, scroll_amount)
 
-        # 4-2. 페이지 맨 아래 도달 확인
+        # 3-2. 페이지 맨 아래 도달 확인
         if is_at_page_bottom(driver):
             logger.info(f"스크롤 {i+1}/{sections}: 페이지 맨 아래 도달, 스크롤 중단")
             break
 
-        # 4-3. 읽기 시간 체류
+        # 3-3. 읽기 시간 체류
         logger.info(
             f"스크롤 {i+1}/{sections}: {scroll_amount}px 이동, {READING_PAUSE_MIN:.1f}~{READING_PAUSE_MAX:.1f}초 체류"
         )
         wait_random(min_sec=READING_PAUSE_MIN, max_sec=READING_PAUSE_MAX)
 
-        # 4-4. 확률적으로 역스크롤 (첫 번째 구간 제외)
+        # 3-4. 확률적으로 역스크롤 (첫 번째 구간 제외)
         if i > 0 and random.random() < REVERSE_SCROLL_PROBABILITY:
             reverse_amount = random.randint(SCROLL_PIXEL_MIN, SCROLL_PIXEL_MAX) / 2
             smooth_scroll(driver, -reverse_amount)
             logger.info(f"역스크롤: -{reverse_amount}px")
             wait_random(min_sec=1.0, max_sec=2.0)
 
-    # 5. 경과 시간 계산 및 부족한 시간 추가 대기
+    # 4. 경과 시간 계산 및 부족한 시간 추가 대기
     elapsed = time.time() - start_time
 
     if elapsed < target_duration:
@@ -154,11 +143,11 @@ def simulate_reading(driver, target_duration, btn_comment=None):
         logger.info(f"추가 대기: {remaining:.1f}초")
         time.sleep(remaining)
 
-    # 6. 총 소요 시간 로그 출력
+    # 5. 총 소요 시간 로그 출력
     total_elapsed = time.time() - start_time
     logger.info(f"봇 탐지 회피 완료: 총 {total_elapsed:.1f}초 소요")
 
-    # 7. 댓글 버튼 위치로 스크롤 이동
+    # 6. 댓글 버튼 위치로 스크롤 이동
     if btn_comment:
         try:
             driver.execute_script(

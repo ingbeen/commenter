@@ -7,6 +7,8 @@ from common.log_utils import logger
 from common.constants import MY_BLOG_ID
 from driver.driver_manager import DriverManager
 from api.generate_comment import generate_comment
+import random
+import time
 
 
 # ============================================================================
@@ -103,6 +105,21 @@ class CommentWriter(BaseDriver):
         logger.info(f"현재 포스팅글 댓글 수 = {comment_count_int}")
         self.is_under_comment_limit = comment_count_int <= MAX_EXISTING_COMMENTS
 
+    def _type_like_human(self, element, text):
+        """
+        사람처럼 자연스럽게 한 글자씩 타이핑
+
+        각 문자를 순차적으로 입력하며 글자 사이에 랜덤 지연을 추가하여
+        사람의 타이핑 패턴을 모방합니다.
+
+        Args:
+            element: Selenium WebElement (텍스트를 입력할 대상 요소)
+            text: 입력할 텍스트 문자열
+        """
+        for char in text:
+            element.send_keys(char)
+            time.sleep(random.uniform(0.1, 0.2))
+
     def add_comment(self, header: str, content: str):
         """
         댓글을 작성하고 등록 성공 여부를 반환
@@ -126,11 +143,11 @@ class CommentWriter(BaseDriver):
         # 3. 댓글 입력창 확인 후 OpenAI API로 댓글 생성
         text = generate_comment(header, content)
 
-        # 4. 댓글 입력 영역에 텍스트 입력
+        # 4. 댓글 입력 영역에 사람처럼 타이핑하여 텍스트 입력
         write_area = u_cbox_write_box.find_element(
             By.CSS_SELECTOR, '.u_cbox_inbox div[contenteditable="true"]'
         )
-        write_area.send_keys(text)
+        self._type_like_human(write_area, text)
 
         # 5. 댓글 등록 버튼 클릭
         u_cbox_btn_upload = u_cbox_write_box.find_element(

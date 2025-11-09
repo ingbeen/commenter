@@ -7,8 +7,7 @@ from driver.driver_manager import DriverManager
 import time
 
 # 최근 댓글 작성자 최대 수집 개수
-# MAX_COMMENTERS_TO_COLLECT = 200
-MAX_COMMENTERS_TO_COLLECT = 50
+MAX_COMMENTERS_TO_COLLECT = 200
 
 
 class CommentScraper(BaseDriver):
