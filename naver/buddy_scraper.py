@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 
 from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID
+from common.log_utils import logger
 from common.time_utils import wait_random
 from driver.base_driver import BaseDriver
 from driver.driver_manager import DriverManager
@@ -54,6 +55,7 @@ class BuddyScraper(BaseDriver):
                     if blog_id and blog_id not in EXCLUDED_BLOG_IDS:
                         collected_ids.add(blog_id)
 
+            logger.info(f"len(collected_ids) = {len(collected_ids)}")
             page += 1
 
             next_page_selector = f'.paginate_re a[href="javascript:goPage({page})"]'

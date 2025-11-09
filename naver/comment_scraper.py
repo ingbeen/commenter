@@ -66,6 +66,8 @@ class CommentScraper(BaseDriver):
                 blog_id = el.text.strip()
                 if blog_id and blog_id not in EXCLUDED_BLOG_IDS:
                     collected_ids.add(blog_id)
+
+            logger.info(f"len(collected_ids) = {len(collected_ids)}")
             page += 1
 
         return list(collected_ids)
