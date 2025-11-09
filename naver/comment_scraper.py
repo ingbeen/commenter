@@ -1,10 +1,12 @@
-from selenium.webdriver.common.by import By
+import time
+
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
-from driver.base_driver import BaseDriver
+from selenium.webdriver.common.by import By
+
 from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID
 from common.log_utils import logger
+from driver.base_driver import BaseDriver
 from driver.driver_manager import DriverManager
-import time
 
 # 최근 댓글 작성자 최대 수집 개수
 MAX_COMMENTERS_TO_COLLECT = 200
@@ -47,7 +49,7 @@ class CommentScraper(BaseDriver):
                             By.ID, "tableListById"
                         )
                     else:
-                        logger.error(
+                        logger.warning(
                             "로그인 대기 시간이 초과되었습니다. 프로그램을 종료합니다."
                         )
                         raise Exception("로그인 실패: 시간 초과")

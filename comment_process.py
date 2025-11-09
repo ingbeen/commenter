@@ -127,7 +127,7 @@ class CommentProcessor:
             # 네이버 경고창(Alert) 발생 시 처리
             try:
                 alert_text = getattr(e, "alert_text", "alert_err")
-                logger.error(f"alert_text : {alert_text}")
+                logger.warning(f"alert_text : {alert_text}")
                 alert = self.driver_manager.get_driver().switch_to.alert
                 alert.accept()
             except NoAlertPresentException:
@@ -136,7 +136,7 @@ class CommentProcessor:
             error_log(e, url)
             self.alert_count += 1
 
-            logger.error(f"alert_count = {self.alert_count}")
+            logger.warning(f"alert_count = {self.alert_count}")
             # Alert가 임계값 이상 발생하거나 "더이상 등록할 수 없습니다" 메시지 발생 시 중단
             if (
                 "더이상 등록할 수 없습니다" in alert_text
@@ -147,13 +147,13 @@ class CommentProcessor:
         except NoSuchElementException as e:
             # 자주 발생하는 요소 누락 예외는 로그만 기록하고 계속 진행
             if '[id="post_1"]' in str(e) or 'id="post_1"' in str(e):
-                logger.error("예외처리 / post_1 없음")
+                logger.warning("예외처리 / post_1 없음")
             elif ".area_sympathy" in str(e) or 'class="area_sympathy"' in str(e):
-                logger.error("예외처리 / area_sympathy 없음")
+                logger.warning("예외처리 / area_sympathy 없음")
             elif ".area_comment .btn_comment" in str(e) or 'class="btn_comment"' in str(
                 e
             ):
-                logger.error("예외처리 / btn_comment 없음")
+                logger.warning("예외처리 / btn_comment 없음")
             else:
                 error_log(e, url)
         except Exception as e:
