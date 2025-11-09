@@ -1,10 +1,14 @@
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from driver.base_driver import BaseDriver
-from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID, RECENT_COMMENTER_LIMIT
+from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID
 from common.log_utils import logger
 from driver.driver_manager import DriverManager
 import time
+
+# 최근 댓글 작성자 최대 수집 개수
+# MAX_COMMENTERS_TO_COLLECT = 200
+MAX_COMMENTERS_TO_COLLECT = 50
 
 
 class CommentScraper(BaseDriver):
@@ -15,7 +19,7 @@ class CommentScraper(BaseDriver):
         page = 1
         collected_ids = set()
 
-        while len(collected_ids) < RECENT_COMMENTER_LIMIT:
+        while len(collected_ids) < MAX_COMMENTERS_TO_COLLECT:
             self._go_to_comment_manage(page)
 
             # 1. tableListById 요소 찾기 시도

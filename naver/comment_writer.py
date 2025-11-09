@@ -4,8 +4,17 @@ from common.time_utils import wait_random
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from common.log_utils import logger
-from common.constants import MY_BLOG_ID, CAN_ADD_COMMENT_LIMIT
+from common.constants import MY_BLOG_ID
 from driver.driver_manager import DriverManager
+from api.generate_comment import generate_comment
+
+
+# ============================================================================
+# 상수 정의
+# ============================================================================
+
+# 댓글 작성이 가능한 기존 댓글 수의 최대값
+MAX_EXISTING_COMMENTS = 100
 
 
 class CommentWriter(BaseDriver):
@@ -92,14 +101,15 @@ class CommentWriter(BaseDriver):
             comment_count_int = 0
 
         logger.info(f"현재 포스팅글 댓글 수 = {comment_count_int}")
-        self.is_under_comment_limit = comment_count_int <= CAN_ADD_COMMENT_LIMIT
+        self.is_under_comment_limit = comment_count_int <= MAX_EXISTING_COMMENTS
 
-    def add_comment(self, text: str):
+    def add_comment(self, header: str, content: str):
         """
         댓글을 작성하고 등록 성공 여부를 반환
 
         Args:
-            text: 작성할 댓글 내용
+            header: 블로그 게시글 제목
+            content: 블로그 게시글 본문 (토큰 제한 적용됨)
 
         Returns:
             bool: 댓글 작성 성공 여부
@@ -113,20 +123,23 @@ class CommentWriter(BaseDriver):
             EC.visibility_of_element_located((By.CSS_SELECTOR, ".u_cbox_write_box"))
         )
 
-        # 3. 댓글 입력 영역에 텍스트 입력
+        # 3. 댓글 입력창 확인 후 OpenAI API로 댓글 생성
+        text = generate_comment(header, content)
+
+        # 4. 댓글 입력 영역에 텍스트 입력
         write_area = u_cbox_write_box.find_element(
             By.CSS_SELECTOR, '.u_cbox_inbox div[contenteditable="true"]'
         )
         write_area.send_keys(text)
 
-        # 4. 댓글 등록 버튼 클릭
+        # 5. 댓글 등록 버튼 클릭
         u_cbox_btn_upload = u_cbox_write_box.find_element(
             By.CSS_SELECTOR, ".u_cbox_upload .u_cbox_btn_upload"
         )
         u_cbox_btn_upload.click()
         wait_random(min_sec=2, max_sec=4)
 
-        # 5. 댓글 작성 성공 여부 확인
+        # 6. 댓글 작성 성공 여부 확인
         # 작성된 댓글 목록에서 내 블로그 ID가 있는지 확인
         post_1 = self.driver_manager.get_driver().find_element(By.ID, "post_1")
         u_cbox_names = post_1.find_elements(

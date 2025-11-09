@@ -1,9 +1,12 @@
 from selenium.webdriver.common.by import By
 from driver.base_driver import BaseDriver
 from common.time_utils import wait_random
-from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID, RECENT_POSTING_BUDDY_LIMIT
+from common.constants import EXCLUDED_BLOG_IDS, MY_BLOG_ID
 from common.log_utils import logger
 from driver.driver_manager import DriverManager
+
+# 서로이웃 최근 게시자 최대 수집 개수
+MAX_BUDDIES_TO_COLLECT = 500
 
 
 class BuddyScraper(BaseDriver):
@@ -39,7 +42,7 @@ class BuddyScraper(BaseDriver):
         )
         self._click_selectbox_item_by_text(buudyall_items, "서로이웃")
 
-        while len(collected_ids) < RECENT_POSTING_BUDDY_LIMIT:
+        while len(collected_ids) < MAX_BUDDIES_TO_COLLECT:
             self._switch_to_papermain_iframe()
             blog_links = self.buddy_list_manage.find_elements(
                 By.CSS_SELECTOR, ".tbl_buddymanage tbody td.buddy a"

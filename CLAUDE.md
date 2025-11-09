@@ -89,7 +89,7 @@ main.py (진입점)
 
 ### common/ - 공통 유틸리티
 
-- [common/constants.py](common/constants.py): 블로그 ID, 제외 대상 목록, 상수 정의
+- [common/constants.py](common/constants.py): 여러 파일에서 공유되는 블로그 ID 및 제외 대상 목록 정의 (단일 파일에서만 사용되는 상수는 각 파일에 직접 선언)
 - [common/time_utils.py](common/time_utils.py): 랜덤 대기 함수 (1-3초)
 - [common/log_utils.py](common/log_utils.py): 로깅 설정 (파일 + 콘솔)
 
@@ -165,12 +165,12 @@ main.py (진입점)
 
 네이버 블로그 UI가 자주 변경되므로 CSS 선택자나 XPath 수정이 필요할 수 있습니다.
 
-### 2. 상수 변경 시
+### 2. 상수 관리 정책
 
-주요 상수는 [common/constants.py](common/constants.py)에서 관리합니다:
-- 최근 댓글 작성자 수집 개수
-- 서로이웃 최근 게시자 수집 개수
-- 댓글 수 제한
+- **공유 상수**: [common/constants.py](common/constants.py)에서 관리
+  - 여러 모듈에서 참조하는 상수
+- **로컬 상수**: 각 파일에 직접 선언
+  - 단일 파일에서만 사용되는 상수 (예: 수집 개수, 제한값 등)
 
 ## 보안 주의사항
 

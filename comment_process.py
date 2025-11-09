@@ -1,5 +1,4 @@
 from api.generate_comment import (
-    generate_comment,
     truncate_text_to_token_limit,
     is_token_length_valid,
 )
@@ -9,6 +8,12 @@ from naver.comment_scraper import CommentScraper
 from naver.buddy_scraper import BuddyScraper
 from naver.blog_scraper import BlogScraper
 from common.log_utils import error_log, logger
+from common.human_behavior import (
+    simulate_reading,
+    BOT_EVASION_ENABLED,
+    TOTAL_STAY_DURATION_MIN,
+    TOTAL_STAY_DURATION_MAX,
+)
 from selenium.common.exceptions import (
     NoSuchElementException,
     UnexpectedAlertPresentException,
@@ -16,6 +21,7 @@ from selenium.common.exceptions import (
 )
 import openai
 import sys
+import random
 
 
 class CommentProcessor:
@@ -90,11 +96,20 @@ class CommentProcessor:
                 logger.info("댓글 등록 제외")
                 return
 
-            # 7. OpenAI API를 사용하여 댓글 생성
-            comment = generate_comment(header, content)
+            # 7. 봇 탐지 회피: 페이지 읽기 시뮬레이션 (20-30초 체류)
+            if BOT_EVASION_ENABLED:
+                target_duration = random.uniform(
+                    TOTAL_STAY_DURATION_MIN, TOTAL_STAY_DURATION_MAX
+                )
+                simulate_reading(
+                    self.driver_manager.get_driver(),
+                    target_duration,
+                    comment_writer.btn_comment,
+                )
 
             # 8. 댓글 작성 및 성공 여부 확인
-            is_success = comment_writer.add_comment(comment)
+            # (댓글 입력창 확인 후 OpenAI API 호출하여 댓글 생성 및 작성)
+            is_success = comment_writer.add_comment(header, content)
             if is_success:
                 self.success_count += 1
         except openai.RateLimitError as e:
