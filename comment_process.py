@@ -41,7 +41,7 @@ class CommentProcessor:
         alert_count (int): 발생한 Alert 예외 횟수
     """
 
-    ALERT_THRESHOLD = 5
+    ALERT_THRESHOLD = 10
 
     def __init__(self, driver_manager: DriverManager):
         """

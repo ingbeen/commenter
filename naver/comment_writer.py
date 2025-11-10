@@ -155,7 +155,7 @@ class CommentWriter(BaseDriver):
             By.CSS_SELECTOR, ".u_cbox_upload .u_cbox_btn_upload"
         )
         u_cbox_btn_upload.click()
-        wait_random(min_sec=2, max_sec=4)
+        wait_random(min_sec=5, max_sec=10)
 
         # 6. 댓글 작성 성공 여부 확인
         # 작성된 댓글 목록에서 내 블로그 ID가 있는지 확인

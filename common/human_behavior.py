@@ -9,9 +9,9 @@
 
 import random
 import time
-from common.time_utils import wait_random
-from common.log_utils import logger
 
+from common.log_utils import logger
+from common.time_utils import wait_random
 
 # ============================================================================
 # 상수 정의
