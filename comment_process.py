@@ -120,8 +120,8 @@ class CommentProcessor:
             # OpenAI API Rate Limit 초과 시 즉시 프로그램 중단
             # (API 요금 한도 초과 또는 요청 제한 도달)
             error_log(e, url)
-            logger.error("[자동화 중단] OpenAI API Rate Limit 초과")
             self.driver_manager.quit()
+            logger.error("[자동화 중단] OpenAI API Rate Limit 초과")
             sys.exit("[자동화 중단] OpenAI API Rate Limit 초과")
         except UnexpectedAlertPresentException as e:
             # 네이버 경고창(Alert) 발생 시 처리
@@ -143,6 +143,7 @@ class CommentProcessor:
                 or self.alert_count >= self.ALERT_THRESHOLD
             ):
                 self.driver_manager.quit()
+                logger.error("[자동화 중단] 네이버 댓글 제한 경고창")
                 sys.exit("[자동화 중단] 네이버 댓글 제한 경고창")
         except NoSuchElementException as e:
             # 자주 발생하는 요소 누락 예외는 로그만 기록하고 계속 진행
