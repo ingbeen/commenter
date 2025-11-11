@@ -29,8 +29,6 @@ READING_PAUSE_MIN = 1.0
 READING_PAUSE_MAX = 3.0
 
 # 스크롤 설정
-SCROLL_SECTIONS_MIN = 8
-SCROLL_SECTIONS_MAX = 12
 SCROLL_PIXEL_MIN = 700
 SCROLL_PIXEL_MAX = 1500
 
@@ -84,32 +82,36 @@ def simulate_reading(driver, target_duration, btn_comment=None):
     전체 체류시간을 정확히 제어하며, 각 행동마다 상세한 로그를 출력합니다.
 
     처리 흐름:
-    1. 목표 체류시간 설정 및 시작 시간 기록
+    1. 최소 체류시간 설정 및 시작 시간 기록
     2. 페이지 상단으로 이동
-    3. 스크롤 구간별 반복:
+    3. target_duration 기반 스크롤 구간 수 계산
+       - 평균 읽기 시간(READING_PAUSE 중간값)으로 적정 구간 수 산출
+    4. 스크롤 구간별 반복:
        - 부드러운 스크롤 이동
        - 페이지 맨 아래 도달 확인 (도달 시 반복 중단)
        - 구간별 읽기 시간 체류
        - 확률적으로 역스크롤
-    4. 경과 시간 계산 및 부족한 시간 추가 대기
-    5. 총 소요 시간 로그 출력
-    6. 댓글 버튼 위치로 스크롤 이동
+    5. 경과 시간 계산 및 부족한 시간 추가 대기
+    6. 총 소요 시간 로그 출력
+    7. 댓글 버튼 위치로 스크롤 이동
 
     Args:
         driver: Selenium WebDriver 인스턴스
-        target_duration: 목표 체류시간 (초)
+        target_duration: 최소 체류시간 (초)
         btn_comment: 댓글 버튼 웹 요소 (선택적, None이면 스크롤 스킵)
     """
     start_time = time.time()
-    logger.info(f"봇 탐지 회피 시작: 목표 체류시간 {target_duration:.1f}초")
+    logger.info(f"봇 탐지 회피 시작: 최소 체류시간 {target_duration:.1f}초")
 
     # 1. 페이지 상단으로 이동
     driver.execute_script("window.scrollTo(0, 0);")
     logger.info("페이지 상단으로 이동")
-    wait_random(min_sec=0.3, max_sec=0.7)
+    wait_random(min_sec=1, max_sec=2)
 
-    # 2. 스크롤 구간 수 결정
-    sections = random.randint(SCROLL_SECTIONS_MIN, SCROLL_SECTIONS_MAX)
+    # 2. 스크롤 구간 수 계산 (target_duration 기반)
+    average_pause = (READING_PAUSE_MIN + READING_PAUSE_MAX) / 2
+    sections = max(1, int(target_duration / average_pause))
+    logger.info(f"계산된 스크롤 구간 수: {sections} (목표 시간: {target_duration:.1f}초)")
 
     # 3. 각 구간별 스크롤 및 읽기 시뮬레이션
     for i in range(sections):

@@ -1,5 +1,5 @@
-import time
 import random
+import time
 
 
 def wait_random(min_sec=1.0, max_sec=3.0):
