@@ -119,7 +119,7 @@ class CommentWriter(BaseDriver):
         """
         for char in text:
             element.send_keys(char)
-            time.sleep(random.uniform(0.1, 0.2))
+            time.sleep(random.uniform(0.05, 0.1))
 
     def add_comment(self, header: str, content: str):
         """
