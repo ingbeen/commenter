@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from api.generate_comment import generate_comment
 from common.constants import MY_BLOG_ID
+from common.human_behavior import BOT_EVASION_ENABLED
 from common.log_utils import logger
 from common.time_utils import wait_random
 from driver.base_driver import BaseDriver
@@ -148,7 +149,10 @@ class CommentWriter(BaseDriver):
         write_area = u_cbox_write_box.find_element(
             By.CSS_SELECTOR, '.u_cbox_inbox div[contenteditable="true"]'
         )
-        self._type_like_human(write_area, text)
+        if BOT_EVASION_ENABLED:
+            self._type_like_human(write_area, text)
+        else:
+            write_area.send_keys(text)
 
         # 5. 댓글 등록 버튼 클릭
         u_cbox_btn_upload = u_cbox_write_box.find_element(
@@ -166,6 +170,6 @@ class CommentWriter(BaseDriver):
         is_success = any(
             a.get_attribute("href").split("/")[-1] == MY_BLOG_ID for a in u_cbox_names
         )
-        logger.info(f"댓글 등록 성공 여부 = {is_success}")
+        # logger.info(f"댓글 등록 성공 여부 = {is_success}")
 
         return is_success

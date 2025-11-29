@@ -18,7 +18,7 @@ from common.time_utils import wait_random
 # ============================================================================
 
 # 봇 탐지 회피 활성화 여부
-BOT_EVASION_ENABLED = True
+BOT_EVASION_ENABLED = False
 
 # 전체 체류시간 설정 (초)
 TOTAL_STAY_DURATION_MIN = 20

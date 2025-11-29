@@ -28,7 +28,7 @@ def api_log(response, user_content: str, comment: str):
     user_content = user_content.replace("\n", " / ")
     msg = (
         "[API 사용로그]\n"
-        f"user_content: {user_content}\n"
+        # f"user_content: {user_content}\n"
         f"comment: {comment}\n"
         f"총 토큰: {usage.total_tokens} / 입력: {usage.prompt_tokens} / 출력: {usage.completion_tokens}"
     )
