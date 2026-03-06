@@ -36,6 +36,7 @@ class CommentProcessor:
     """
 
     ALERT_THRESHOLD = 10
+    SUCCESS_LIMIT = 60
 
     def __init__(self, driver_manager: DriverManager):
         """
@@ -87,10 +88,7 @@ class CommentProcessor:
             # 6. 댓글 작성 가능 여부 검증
             # - 공감 버튼을 클릭했는지 확인
             # - 댓글 수가 제한 이하인지 확인
-            if (
-                not comment_writer.did_press_like
-                or not comment_writer.is_under_comment_limit
-            ):
+            if not comment_writer.did_press_like or not comment_writer.is_under_comment_limit:
                 logger.info("댓글 등록 제외")
                 return
 
@@ -128,10 +126,7 @@ class CommentProcessor:
 
             logger.warning(f"alert_count = {self.alert_count}")
             # Alert가 임계값 이상 발생하거나 "더이상 등록할 수 없습니다" 메시지 발생 시 중단
-            if (
-                "더이상 등록할 수 없습니다" in alert_text
-                or self.alert_count >= self.ALERT_THRESHOLD
-            ):
+            if "더이상 등록할 수 없습니다" in alert_text or self.alert_count >= self.ALERT_THRESHOLD:
                 self.driver_manager.quit()
                 logger.error("[자동화 중단] 네이버 댓글 제한 경고창")
                 sys.exit("[자동화 중단] 네이버 댓글 제한 경고창")
@@ -141,9 +136,7 @@ class CommentProcessor:
                 logger.warning("예외처리 / post_1 없음")
             elif ".area_sympathy" in str(e) or 'class="area_sympathy"' in str(e):
                 logger.warning("예외처리 / area_sympathy 없음")
-            elif ".area_comment .btn_comment" in str(e) or 'class="btn_comment"' in str(
-                e
-            ):
+            elif ".area_comment .btn_comment" in str(e) or 'class="btn_comment"' in str(e):
                 logger.warning("예외처리 / btn_comment 없음")
             else:
                 error_log(e, url)
@@ -162,9 +155,13 @@ class CommentProcessor:
 
         for blog_id in commenter_ids:
             self._process_single_blog(blog_id, blog_scraper)
-            logger.info(
-                f"repeat_count = {self.repeat_count} / success_count = {self.success_count}"
-            )
+            logger.info(f"repeat_count = {self.repeat_count} / success_count = {self.success_count}")
+
+            # 댓글 작성 성공 횟수가 제한에 도달하면 프로그램 중단
+            if self.success_count >= self.SUCCESS_LIMIT:
+                self.driver_manager.quit()
+                logger.error("[자동화 중단] 댓글 작성 성공 횟수 제한 도달")
+                sys.exit("[자동화 중단] 댓글 작성 성공 횟수 제한 도달")
 
     def run(self):
         """
@@ -185,10 +182,6 @@ class CommentProcessor:
 
         # 3. 이미 댓글 작성한 블로그를 제외한 서로이웃 필터링
         recent_commenter_set = set(recent_commenter_ids)
-        filtered_ids = [
-            blog_id
-            for blog_id in recent_posting_buddy_ids
-            if blog_id not in recent_commenter_set
-        ]
+        filtered_ids = [blog_id for blog_id in recent_posting_buddy_ids if blog_id not in recent_commenter_set]
 
         self._process_loop_blog(filtered_ids)
