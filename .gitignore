@@ -19,7 +19,10 @@ venv/
 ENV/
 
 # VSCode
-# .vscode/
+.vscode/
+
+# Claude Code
+.claude/
 
 # Environment variables
 .env
