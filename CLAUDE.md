@@ -19,6 +19,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 필수 개발 명령어
 
 ```bash
+# 가상환경 생성 (최초 1회)
+python -m venv .venv
+
 # 가상환경 활성화 (Windows)
 .venv\Scripts\activate
 
@@ -37,7 +40,7 @@ python main.py
 프로젝트 실행 전 필수 설정:
 
 1. **환경 변수**: `.env` 파일에 `OPENAI_API_KEY` 필요
-2. **Chrome WebDriver**: 사용자 데이터 경로 `C:\chrome-driver\chrome-user-data` 필요
+2. **Chrome WebDriver**: 사용자 데이터 경로 `C:\chrome-driver\chrome-user-data`는 실행 시 자동 생성됨. 최초 실행 후 Chrome 창에서 네이버 로그인 필요 (이후 세션 유지)
 3. **로그 디렉토리**: `C:\logs` 디렉토리 생성 (로그 파일: `app.log`)
 
 ## 아키텍처 및 데이터 흐름
