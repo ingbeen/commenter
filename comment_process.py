@@ -36,7 +36,7 @@ class CommentProcessor:
     """
 
     ALERT_THRESHOLD = 10
-    SUCCESS_LIMIT = 60
+    SUCCESS_LIMIT = 49
 
     def __init__(self, driver_manager: DriverManager):
         """

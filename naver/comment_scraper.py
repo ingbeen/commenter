@@ -1,4 +1,5 @@
 import time
+from urllib.parse import urlparse
 
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
@@ -89,8 +90,8 @@ class CommentScraper(BaseDriver):
             try:
                 current_url = self.driver_manager.get_driver().current_url
 
-                # 1. admin.blog.naver.com 도메인으로 돌아왔는지 확인
-                if "admin.blog.naver.com" in current_url:
+                # 1. admin.blog.naver.com 도메인으로 돌아왔는지 확인 (hostname 정확히 비교)
+                if urlparse(current_url).hostname == "admin.blog.naver.com":
                     # 2. content 요소가 존재하는지 확인
                     try:
                         self.driver_manager.get_driver().find_element(By.ID, "content")
